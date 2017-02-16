@@ -2,14 +2,11 @@
 
 const fs = require('fs')
 const path = require('path')
-// const diff = require('variable-diff')
-// const disparity = require('disparity')
-const debug = require('debug')('snap-shot')
+const debug = require('debug')('snap-shot-core')
 const la = require('lazy-ass')
 const is = require('check-more-types')
 const mkdirp = require('mkdirp')
 const vm = require('vm')
-const {validate} = require('validate-by-example')
 
 const cwd = process.cwd()
 const fromCurrentFolder = path.relative.bind(null, cwd)
@@ -36,15 +33,21 @@ function loadSnaps (snapshotPath) {
   }
 }
 
-function fileForSpec (specFile) {
+function fileForSpec (specFile, ext) {
+  la(is.maybe.string(ext), 'invalid extension to find', ext)
+
   const specName = path.basename(specFile)
-  const filename = path.join(snapshotsFolder, specName + '.schema-shot')
+  let filename = path.join(snapshotsFolder, specName)
+  if (ext) {
+    filename += ext
+  }
   return path.resolve(filename)
 }
 
-function loadSnapshots (specFile) {
+function loadSnapshots (specFile, ext) {
   la(is.unemptyString(specFile), 'missing specFile name', specFile)
-  const filename = fileForSpec(specFile)
+
+  const filename = fileForSpec(specFile, ext)
   debug('loading snapshots from %s', filename)
   let snapshots = {}
   if (fs.existsSync(filename)) {
@@ -55,9 +58,9 @@ function loadSnapshots (specFile) {
   return snapshots
 }
 
-function saveSnapshots (specFile, snapshots) {
+function saveSnapshots (specFile, snapshots, ext) {
   mkdirp.sync(snapshotsFolder)
-  const filename = fileForSpec(specFile)
+  const filename = fileForSpec(specFile, ext)
   const specRelativeName = fromCurrentFolder(specFile)
   debug('saving snapshots into %s for %s', filename, specRelativeName)
 
@@ -71,21 +74,26 @@ function saveSnapshots (specFile, snapshots) {
   return snapshots
 }
 
+const isValidCompareResult = is.schema({
+  valid: is.bool,
+  message: is.maybe.string
+})
+
 // expected = schema we expect value to adhere to
-function raiseIfDifferent ({value, expected, specName}) {
+function raiseIfDifferent ({value, expected, specName, compare}) {
   la(value, 'missing value to compare', value)
   la(expected, 'missing expected valu', expected)
   la(is.unemptyString(specName), 'missing spec name', specName)
 
-  const result = validate(expected, value)
-  if (!result.valid) {
-    la(is.array(result.errors), 'invalid errors', result)
+  const result = compare({expected, value})
+  la(isValidCompareResult(result), 'invalid compare result', result,
+    'when comparing value\n', value, 'with expected\n', expected)
 
-    const text = result.errors.map(o => `${o.field}: ${o.message}`).join('\n')
+  if (!result.valid) {
     debug('Test "%s" snapshot difference', specName)
-    const msg = `schema difference\n${text}`
-    console.log(msg)
-    throw new Error(msg)
+    la(is.unemptyString(result.message), 'missing result message', result)
+    console.log(result.message)
+    throw new Error(result.message)
   }
 }
 

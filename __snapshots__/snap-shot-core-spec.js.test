@@ -1,0 +1,4 @@
+exports['my test 1'] = {
+  "foo": "bar"
+}
+

@@ -2,10 +2,10 @@
 
 const la = require('lazy-ass')
 const is = require('check-more-types')
-const callsites = require('stack-sites')
 
 /* global localStorage, fetch */
 la(is.object(localStorage), 'missing localStorage')
+la(is.fn(fetch), 'missing fetch')
 
 function getFilename () {
   return 'snap-shot.json'
@@ -30,36 +30,39 @@ function saveSnapshots (snapshots) {
 }
 
 function init () {
+  // for now disable
+  return Promise.resolve()
+
   // find out the source for all test -> this spec file
-  const sites = callsites()
-  la(sites.length, 'missing callsite')
-  const specFileUrl = sites[1].filename
-  la(is.webUrl(specFileUrl), 'missing spec url', specFileUrl)
-  console.log('loading spec from', specFileUrl)
+  // const sites = callsites()
+  // la(sites.length, 'missing callsite')
+  // const specFileUrl = sites[1].filename
+  // la(is.webUrl(specFileUrl), 'missing spec url', specFileUrl)
+  // console.log('loading spec from', specFileUrl)
 
-  // specFileUrl is something like
-  // http://localhost:49829/__cypress/tests?p=cypress/integration/spec.js-438
-  // we will need to get "true" filename which in this case should be
-  // cypress/integration/spec.js
-  const pIndex = specFileUrl.indexOf('?p=')
-  const dotJsIndex = specFileUrl.indexOf('.js-', pIndex)
-  const specFile = specFileUrl.substr(pIndex + 3, dotJsIndex - pIndex)
-  console.log('specFile is "%s"', specFile)
+  // // specFileUrl is something like
+  // // http://localhost:49829/__cypress/tests?p=cypress/integration/spec.js-438
+  // // we will need to get "true" filename which in this case should be
+  // // cypress/integration/spec.js
+  // const pIndex = specFileUrl.indexOf('?p=')
+  // const dotJsIndex = specFileUrl.indexOf('.js-', pIndex)
+  // const specFile = specFileUrl.substr(pIndex + 3, dotJsIndex - pIndex)
+  // console.log('specFile is "%s"', specFile)
 
-  // ignore arguments for now
-  api.fromCurrentFolder = () => specFile
+  // // ignore arguments for now
+  // api.fromCurrentFolder = () => specFile
 
-  // cache the fetched source, otherwise every test fetches it
-  const shouldFetch = api.readFileSync === dummyReadFileSync
-  if (shouldFetch) {
-    return fetch(specFileUrl).then(r => r.text())
-      .then(source => {
-        // ignores filename for now
-        api.readFileSync = () => source
-      })
-  } else {
-    return Promise.resolve()
-  }
+  // // cache the fetched source, otherwise every test fetches it
+  // const shouldFetch = api.readFileSync === dummyReadFileSync
+  // if (shouldFetch) {
+  //   return fetch(specFileUrl).then(r => r.text())
+  //     .then(source => {
+  //       // ignores filename for now
+  //       api.readFileSync = () => source
+  //     })
+  // } else {
+  //   return Promise.resolve()
+  // }
 }
 
 function dummyReadFileSync () {

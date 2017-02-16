@@ -69,5 +69,11 @@
     "pre-git": "3.13.0",
     "standard": "8.6.0",
     "semantic-release": "^6.3.2"
+  },
+  "dependencies": {
+    "check-more-types": "2.23.0",
+    "debug": "2.6.1",
+    "lazy-ass": "1.5.0",
+    "mkdirp": "0.5.1"
   }
 }

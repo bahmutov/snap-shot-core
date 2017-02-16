@@ -1,19 +1,17 @@
 'use strict'
 
-const debug = require('debug')('snap-shot')
+const debug = require('debug')('snap-shot-core')
 const debugSave = require('debug')('save')
-const stackSites = require('stack-sites')
-const callsites = require('callsites')
 const la = require('lazy-ass')
 const is = require('check-more-types')
 const utils = require('./utils')
 const {snapshotIndex, strip} = utils
-const {train} = require('validate-by-example')
 
 const isNode = Boolean(require('fs').existsSync)
 const isBrowser = !isNode
 const isCypress = isBrowser && typeof cy === 'object'
 
+// TODO do we still need this? Is this working?
 let fs
 if (isNode) {
   fs = require('./file-system')
@@ -30,22 +28,18 @@ const shouldUpdate = Boolean(process.env.UPDATE)
 const shouldShow = Boolean(process.env.SHOW)
 const shouldDryRun = Boolean(process.env.DRY)
 
-function getSpecFunction ({file, line}) {
-  return utils.getSpecFunction({file, line, fs})
-}
-
 const formKey = (specName, oneIndex) =>
   `${specName} ${oneIndex}`
 
-function findStoredValue ({file, specName, index = 1}) {
+function findStoredValue ({file, specName, index = 1, ext}) {
   const relativePath = fs.fromCurrentFolder(file)
   if (shouldUpdate) {
     // let the new value replace the current value
     return
   }
 
-  debug('loading snapshots from %s for spec %s', file, relativePath)
-  const snapshots = fs.loadSnapshots(file)
+  debug('loading snapshots from %s %s for spec %s', file, ext, relativePath)
+  const snapshots = fs.loadSnapshots(file, ext)
   if (!snapshots) {
     return
   }
@@ -58,13 +52,13 @@ function findStoredValue ({file, specName, index = 1}) {
   return snapshots[key]
 }
 
-function storeValue ({file, specName, index, value}) {
+function storeValue ({file, specName, index, value, ext}) {
   la(value !== undefined, 'cannot store undefined value')
   la(is.unemptyString(file), 'missing filename', file)
   la(is.unemptyString(specName), 'missing spec name', specName)
   la(is.positive(index), 'missing snapshot index', file, specName, index)
 
-  const snapshots = fs.loadSnapshots(file)
+  const snapshots = fs.loadSnapshots(file, ext)
   const key = formKey(specName, index)
   snapshots[key] = value
 
@@ -75,7 +69,7 @@ function storeValue ({file, specName, index, value}) {
   }
 
   if (!shouldDryRun) {
-    fs.saveSnapshots(file, snapshots)
+    fs.saveSnapshots(file, snapshots, ext)
     debug('saved updated snapshot %d for spec %s', index, specName)
 
     debugSave('Saved for "%s %d" snapshot\n%s',
@@ -85,76 +79,14 @@ function storeValue ({file, specName, index, value}) {
 
 const isPromise = x => is.object(x) && is.fn(x.then)
 
-function snapshot (what, schemaFormats) {
-  const sites = stackSites()
-  if (sites.length < 3) {
-    // hmm, maybe there is test (like we are inside Cypress)
-    if (this && this.test && this.test.title) {
-      debug('no callsite, but have test title "%s"', this.test.title)
-      return this.test.title
-    }
-    const msg = 'Do not have caller function callsite'
-    throw new Error(msg)
+function snapShotCore ({what, file, specName, compare, ext = '.snapshot'}) {
+  la(is.unemptyString(file), 'missing file', file)
+  la(is.unemptyString(specName), 'missing specName', specName)
+  la(is.fn(compare), 'missing compare function', compare)
+
+  if (ext) {
+    la(ext[0] === '.', 'extension should start with .', ext)
   }
-  debug('%d callsite(s)', sites.length)
-
-  const caller = sites[2]
-  const file = caller.filename
-  // TODO report function name
-  // https://github.com/bahmutov/stack-sites/issues/1
-  const line = caller.line
-  const column = caller.column
-  const message = `
-    file: ${file}
-    line: ${line},
-    column: ${column}
-  `
-  debug(message)
-  let {specName, specSource, startLine} =
-    getSpecFunction({file, line, column})
-
-  // maybe the "snapshot" function was part of composition
-  // TODO handle arbitrary long chains by walking up to library code
-  if (!specName) {
-    const caller = sites[3]
-    const file = caller.filename
-    const line = caller.line
-    const column = caller.column
-    debug('trying to get snapshot from %s %d,%d', file, line, column)
-    const out = getSpecFunction({file, line, column})
-    specName = out.specName
-    specSource = out.specSource
-    startLine = out.startLine
-  }
-
-  if (!specName) {
-    // make the file was transpiled. Try callsites search
-    const sites = callsites()
-    const caller = sites[1]
-    const file = caller.getFileName()
-    const line = caller.getLineNumber()
-    const column = caller.getColumnNumber()
-    debug('trying to get snapshot from callsite %s %d,%d', file, line, column)
-    const out = getSpecFunction({file, line, column})
-    specName = out.specName
-    specSource = out.specSource
-    startLine = out.startLine
-  }
-
-  if (!specName) {
-    console.error('Problem finding caller')
-    console.trace()
-
-    const relativeName = fs.fromCurrentFolder(file)
-    const msg = `Could not determine test for ${relativeName}
-      line ${line} column ${column}`
-    throw new Error(msg)
-  }
-  debug(`found spec name "${specName}" for line ${line} column ${column}`)
-  la(is.unemptyString(specSource), 'could not get spec source from',
-    file, 'line', line, 'column', column, 'named', specName)
-  la(is.number(startLine), 'could not determine spec function start line',
-    file, 'line', line, 'column', column, 'named', specName)
 
   const setOrCheckValue = any => {
     const index = snapshotIndex({specName, counters: snapshotsPerTest})
@@ -164,22 +96,20 @@ function snapshot (what, schemaFormats) {
       specName, index)
 
     const value = strip(any)
-    const expected = findStoredValue({file, specName, index})
-    let schema
+    const expected = findStoredValue({file, specName, index, ext})
     if (expected === undefined) {
-      schema = train(value, schemaFormats)
-      storeValue({file, specName, index, value: schema})
-    } else {
-      debug('found schema snapshot for "%s", value', specName, expected)
-      schema = expected
-      fs.raiseIfDifferent({
-        value,
-        expected,
-        specName
-      })
+      storeValue({file, specName, index, value, ext})
+      return value
     }
 
-    return schema
+    debug('found snapshot for "%s", value', specName, expected)
+    fs.raiseIfDifferent({
+      value,
+      expected,
+      specName,
+      compare
+    })
+    return value
   }
 
   if (isPromise(what)) {
@@ -192,7 +122,7 @@ function snapshot (what, schemaFormats) {
 if (isBrowser) {
   // there might be async step to load test source code in the browser
   la(is.fn(fs.init), 'browser file system is missing init', fs)
-  snapshot.init = fs.init
+  snapShotCore.init = fs.init
 }
 
-module.exports = snapshot
+module.exports = snapShotCore

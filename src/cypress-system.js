@@ -2,11 +2,11 @@
 
 const la = require('lazy-ass')
 const is = require('check-more-types')
-const callsites = require('stack-sites')
 
 // storage adapter for Cypress E2E testing tool
 
 /* global cy, expect, fetch */
+la(is.fn(fetch), 'missing fetch')
 const filename = 'snap-shot.json'
 
 let snapshots
@@ -21,53 +21,55 @@ function saveSnapshots (snapshots) {
 }
 
 function init () {
-  // find out the source for all test -> this spec file
-  const sites = callsites()
-  la(sites.length, 'missing callsite')
-  const specFileUrl = sites[1].filename
-  la(is.webUrl(specFileUrl), 'missing spec url', specFileUrl)
-  console.log('loading spec from', specFileUrl)
+  // for now disable
+  return Promise.resolve()
+  // // find out the source for all test -> this spec file
+  // const sites = callsites()
+  // la(sites.length, 'missing callsite')
+  // const specFileUrl = sites[1].filename
+  // la(is.webUrl(specFileUrl), 'missing spec url', specFileUrl)
+  // console.log('loading spec from', specFileUrl)
 
-  // specFileUrl is something like
-  // http://localhost:49829/__cypress/tests?p=cypress/integration/spec.js-438
-  // we will need to get "true" filename which in this case should be
-  // cypress/integration/spec.js
-  const pIndex = specFileUrl.indexOf('?p=')
-  const dotJsIndex = specFileUrl.indexOf('.js-', pIndex)
-  const specFile = specFileUrl.substr(pIndex + 3, dotJsIndex - pIndex)
-  console.log('specFile is "%s"', specFile)
+  // // specFileUrl is something like
+  // // http://localhost:49829/__cypress/tests?p=cypress/integration/spec.js-438
+  // // we will need to get "true" filename which in this case should be
+  // // cypress/integration/spec.js
+  // const pIndex = specFileUrl.indexOf('?p=')
+  // const dotJsIndex = specFileUrl.indexOf('.js-', pIndex)
+  // const specFile = specFileUrl.substr(pIndex + 3, dotJsIndex - pIndex)
+  // console.log('specFile is "%s"', specFile)
 
-  // ignore arguments for now
-  api.fromCurrentFolder = () => specFile
+  // // ignore arguments for now
+  // api.fromCurrentFolder = () => specFile
 
-  // cache the fetched source, otherwise every test fetches it
-  const shouldFetch = api.readFileSync === dummyReadFileSync
-  if (shouldFetch) {
-    return fetch(specFileUrl).then(r => r.text())
-      .then(source => {
-        // ignores filename for now
-        api.readFileSync = () => source
-      })
-      .then(() => {
-        return fetch('/__cypress/tests?p=./' + filename)
-          .then(r => r.text())
-          .then(function loadedText (text) {
-            if (text.includes('BUNDLE_ERROR')) {
-              return Promise.reject(new Error('not found'))
-            }
-            cy.log('loaded snapshots', filename)
-            // the JSON is wrapped in webpack wrapper ;)
-            const req = eval(text) // eslint-disable-line no-eval
-            snapshots = req('1')
-          })
-          .catch(err => {
-            console.error(err)
-            snapshots = {}
-          })
-      })
-  } else {
-    return Promise.resolve()
-  }
+  // // cache the fetched source, otherwise every test fetches it
+  // const shouldFetch = api.readFileSync === dummyReadFileSync
+  // if (shouldFetch) {
+  //   return fetch(specFileUrl).then(r => r.text())
+  //     .then(source => {
+  //       // ignores filename for now
+  //       api.readFileSync = () => source
+  //     })
+  //     .then(() => {
+  //       return fetch('/__cypress/tests?p=./' + filename)
+  //         .then(r => r.text())
+  //         .then(function loadedText (text) {
+  //           if (text.includes('BUNDLE_ERROR')) {
+  //             return Promise.reject(new Error('not found'))
+  //           }
+  //           cy.log('loaded snapshots', filename)
+  //           // the JSON is wrapped in webpack wrapper ;)
+  //           const req = eval(text) // eslint-disable-line no-eval
+  //           snapshots = req('1')
+  //         })
+  //         .catch(err => {
+  //           console.error(err)
+  //           snapshots = {}
+  //         })
+  //     })
+  // } else {
+  //   return Promise.resolve()
+  // }
 }
 
 function raiseIfDifferent ({value, expected}) {

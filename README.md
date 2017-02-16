@@ -8,6 +8,48 @@
 [![semantic-release][semantic-image] ][semantic-url]
 [![js-standard-style][standard-image]][standard-url]
 
+This is the snapshot loading and saving utility, used by
+[snap-shot][snap-shot] and [schema-shot][schema-shot] projects.
+Can be used to save snapshots from any testing project.
+
+```sh
+npm install --save-dev snap-shot-core
+```
+
+```js
+const snapShot = require('snap-shot-core')
+const what // my object
+const out = snapShot({
+  what,
+  file: __filename,
+  specName: 'my test', // or whatever name you want to give
+  compare: compareFn,
+  ext: '.test' // default value is '.snapshot'
+})
+```
+
+The comparator function needs to compare two values and return an object.
+Here is an example
+
+```js
+const compareFn = ({expected, value}) => {
+  const e = JSON.stringify(expected)
+  const v = JSON.stringify(value)
+  if (e === v) {
+    return {
+      valid: true
+    }
+  }
+  return {
+    valid: false,
+    message: `${e} !== ${v}`
+  }
+}
+```
+
+[snap-shot]: https://github.com/bahmutov/snap-shot
+[schema-shot]: https://github.com/bahmutov/schema-shot
+
 ### Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2017
