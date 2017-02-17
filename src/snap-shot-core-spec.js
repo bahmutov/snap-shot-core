@@ -25,6 +25,16 @@ const compareFn = ({expected, value}) => {
   }
 }
 
+const areSameType = ({expected, value}) => {
+  return {
+    valid: typeof expected === typeof value,
+    message: 'no message'
+  }
+}
+
+const file = __filename
+const snapShotExtension = '.test'
+
 /* global describe, it */
 describe('snap-shot-core', () => {
   const snapShotCore = require('.')
@@ -39,10 +49,10 @@ describe('snap-shot-core', () => {
     }
     const out = snapShotCore({
       what,
-      file: __filename,
+      file,
       specName: 'my test',
       compare: compareFn,
-      ext: '.test',
+      ext: snapShotExtension,
       opts
     })
     la(out !== what, 'returns new reference')
@@ -50,5 +60,45 @@ describe('snap-shot-core', () => {
     const filename = path.join(process.cwd(),
       '__snapshots__/snap-shot-core-spec.js.test')
     la(fs.existsSync(filename), 'cannot find saved file', filename)
+  })
+
+  it('can store derived value', function () {
+    const specName = this.test.title
+    la(is.unemptyString(specName), 'could not get name from', this.test)
+    const store = x => 2 * x
+
+    const what = 40
+    const out = snapShotCore({
+      what,
+      file,
+      specName,
+      store,
+      compare: areSameType,
+      ext: snapShotExtension,
+      opts
+    })
+    la(out === what * 2, 'expected saved value', out)
+  })
+
+  it('typeof example', function () {
+    const specName = this.test.title
+    const store = x => typeof x
+    const compare = ({expected, value}) => ({
+      valid: typeof value === expected,
+      message: 'check the type'
+    })
+    // let us try snapshotting a function
+    // but we only care about the "type" of the value
+    const what = () => 'noop'
+    const out = snapShotCore({
+      what,
+      file,
+      specName,
+      store,
+      compare,
+      ext: snapShotExtension,
+      opts
+    })
+    la(out === 'function', 'expected type', out)
   })
 })

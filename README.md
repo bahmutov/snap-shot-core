@@ -22,11 +22,37 @@ const what // my object
 const out = snapShot({
   what,
   file: __filename,
-  specName: 'my test', // or whatever name you want to give
+  specName: 'my test', // or whatever name you want to give,
+  store, // optional function to preprocess the value before storing
   compare: compareFn,
   ext: '.test' // default value is '.snapshot'
 })
 ```
+
+## Store function
+
+Sometimes you want to store not the value itself, but something derived,
+like the object's schema (check out [schema-shot][schema-shot]). You can
+pass a function `store` that transforms the object before saving.
+For example if we are only interested in the type of value, we can do the
+following (paired with the right `compare` function).
+
+```js
+const store = x => typeof x
+// expected - previously saved "type of" value
+// value - current original value
+const compare = ({expected, value}) => ({
+  valid: typeof value === expected,
+  message: 'check the type'
+})
+snapShot({
+  what,
+  store,
+  compare
+})
+```
+
+## Compare function
 
 The comparator function needs to compare two values and return an object.
 Here is an example
@@ -46,6 +72,11 @@ const compareFn = ({expected, value}) => {
   }
 }
 ```
+
+## Returned value
+
+The `snapShotCore` function returns the *expected* value.
+If this is the first time, it will be `store(what)` value. Otherwise it will be the loaded `expected` value.
 
 [snap-shot]: https://github.com/bahmutov/snap-shot
 [schema-shot]: https://github.com/bahmutov/schema-shot

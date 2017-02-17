@@ -11,6 +11,8 @@ const isNode = Boolean(require('fs').existsSync)
 const isBrowser = !isNode
 const isCypress = isBrowser && typeof cy === 'object'
 
+const identity = x => x
+
 // TODO do we still need this? Is this working?
 let fs
 if (isNode) {
@@ -78,6 +80,7 @@ const isPromise = x => is.object(x) && is.fn(x.then)
 function snapShotCore ({what,
   file,
   specName,
+  store = identity,
   compare,
   ext = '.snapshot',
   opts = {}
@@ -85,6 +88,7 @@ function snapShotCore ({what,
   la(is.unemptyString(file), 'missing file', file)
   la(is.unemptyString(specName), 'missing specName', specName)
   la(is.fn(compare), 'missing compare function', compare)
+  la(is.fn(store), 'invalid store function', store)
 
   if (ext) {
     la(ext[0] === '.', 'extension should start with .', ext)
@@ -106,8 +110,16 @@ function snapShotCore ({what,
       opts
     })
     if (expected === undefined) {
-      storeValue({file, specName, index, value, ext, opts})
-      return value
+      const storedValue = store(value)
+      storeValue({
+        file,
+        specName,
+        index,
+        value: storedValue,
+        ext,
+        opts
+      })
+      return storedValue
     }
 
     debug('found snapshot for "%s", value', specName, expected)
@@ -117,7 +129,7 @@ function snapShotCore ({what,
       specName,
       compare
     })
-    return value
+    return expected
   }
 
   if (isPromise(what)) {
