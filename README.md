@@ -50,6 +50,31 @@ const compareFn = ({expected, value}) => {
 [snap-shot]: https://github.com/bahmutov/snap-shot
 [schema-shot]: https://github.com/bahmutov/schema-shot
 
+## Options
+
+You can pass several options to control the behavior. I usually grab them
+from the environment variables.
+
+* `show` - log snapshot value when saving new one
+* `dryRun` - only show the new snapshot value, but do not save it
+* `update` - override snapshot value with the new one if there is difference
+
+```js
+const opts = {
+  show: Boolean(process.env.SHOW),
+  dryRun: Boolean(process.env.DRY),
+  update: Boolean(process.env.UPDATE)
+}
+snapShot({
+  what,
+  file: __filename,
+  specName: 'my test',
+  compare: compareFn,
+  ext: '.test',
+  opts
+})
+```
+
 ### Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2017

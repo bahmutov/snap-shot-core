@@ -24,16 +24,12 @@ if (isNode) {
 // keeps track how many "snapshot" calls were there per test
 const snapshotsPerTest = {}
 
-const shouldUpdate = Boolean(process.env.UPDATE)
-const shouldShow = Boolean(process.env.SHOW)
-const shouldDryRun = Boolean(process.env.DRY)
-
 const formKey = (specName, oneIndex) =>
   `${specName} ${oneIndex}`
 
-function findStoredValue ({file, specName, index = 1, ext}) {
+function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
   const relativePath = fs.fromCurrentFolder(file)
-  if (shouldUpdate) {
+  if (opts.update) {
     // let the new value replace the current value
     return
   }
@@ -52,7 +48,7 @@ function findStoredValue ({file, specName, index = 1, ext}) {
   return snapshots[key]
 }
 
-function storeValue ({file, specName, index, value, ext}) {
+function storeValue ({file, specName, index, value, ext, opts = {}}) {
   la(value !== undefined, 'cannot store undefined value')
   la(is.unemptyString(file), 'missing filename', file)
   la(is.unemptyString(specName), 'missing spec name', specName)
@@ -62,13 +58,13 @@ function storeValue ({file, specName, index, value, ext}) {
   const key = formKey(specName, index)
   snapshots[key] = value
 
-  if (shouldShow || shouldDryRun) {
+  if (opts.show || opts.dryRun) {
     const relativeName = fs.fromCurrentFolder(file)
     console.log('saving snapshot "%s" for file %s', key, relativeName)
     console.log(value)
   }
 
-  if (!shouldDryRun) {
+  if (!opts.dryRun) {
     fs.saveSnapshots(file, snapshots, ext)
     debug('saved updated snapshot %d for spec %s', index, specName)
 
@@ -79,7 +75,13 @@ function storeValue ({file, specName, index, value, ext}) {
 
 const isPromise = x => is.object(x) && is.fn(x.then)
 
-function snapShotCore ({what, file, specName, compare, ext = '.snapshot'}) {
+function snapShotCore ({what,
+  file,
+  specName,
+  compare,
+  ext = '.snapshot',
+  opts = {}
+}) {
   la(is.unemptyString(file), 'missing file', file)
   la(is.unemptyString(specName), 'missing specName', specName)
   la(is.fn(compare), 'missing compare function', compare)
@@ -96,9 +98,15 @@ function snapShotCore ({what, file, specName, compare, ext = '.snapshot'}) {
       specName, index)
 
     const value = strip(any)
-    const expected = findStoredValue({file, specName, index, ext})
+    const expected = findStoredValue({
+      file,
+      specName,
+      index,
+      ext,
+      opts
+    })
     if (expected === undefined) {
-      storeValue({file, specName, index, value, ext})
+      storeValue({file, specName, index, value, ext, opts})
       return value
     }
 

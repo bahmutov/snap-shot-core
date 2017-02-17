@@ -5,6 +5,12 @@ const is = require('check-more-types')
 const fs = require('fs')
 const path = require('path')
 
+const opts = {
+  show: Boolean(process.env.SHOW),
+  dryRun: Boolean(process.env.DRY),
+  update: Boolean(process.env.UPDATE)
+}
+
 const compareFn = ({expected, value}) => {
   const e = JSON.stringify(expected)
   const v = JSON.stringify(value)
@@ -36,7 +42,8 @@ describe('snap-shot-core', () => {
       file: __filename,
       specName: 'my test',
       compare: compareFn,
-      ext: '.test'
+      ext: '.test',
+      opts
     })
     la(out !== what, 'returns new reference')
     la(out.foo === what.foo, 'different values', out)
