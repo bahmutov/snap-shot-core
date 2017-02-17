@@ -58,6 +58,9 @@
     "unit": "mocha src/*-spec.js",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
+  "release": {
+    "analyzeCommits": "simple-commit-message"
+  },
   "devDependencies": {
     "ban-sensitive-files": "1.9.0",
     "dependency-check": "2.8.0",
@@ -67,8 +70,9 @@
     "mocha": "3.2.0",
     "nsp": "2.6.2",
     "pre-git": "3.13.0",
-    "standard": "8.6.0",
-    "semantic-release": "^6.3.2"
+    "semantic-release": "^6.3.2",
+    "simple-commit-message": "3.0.1",
+    "standard": "8.6.0"
   },
   "dependencies": {
     "check-more-types": "2.23.0",
