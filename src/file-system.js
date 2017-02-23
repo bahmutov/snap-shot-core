@@ -82,7 +82,7 @@ const isValidCompareResult = is.schema({
 // expected = schema we expect value to adhere to
 function raiseIfDifferent ({value, expected, specName, compare}) {
   la(value, 'missing value to compare', value)
-  la(expected, 'missing expected valu', expected)
+  la(expected, 'missing expected value', expected)
   la(is.unemptyString(specName), 'missing spec name', specName)
 
   const result = compare({expected, value})
