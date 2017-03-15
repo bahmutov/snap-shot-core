@@ -6,6 +6,7 @@ const la = require('lazy-ass')
 const is = require('check-more-types')
 const utils = require('./utils')
 const {snapshotIndex, strip} = utils
+const escapeQuotes = require('escape-quotes')
 
 const isNode = Boolean(require('fs').existsSync)
 const isBrowser = !isNode
@@ -27,7 +28,7 @@ if (isNode) {
 const snapshotsPerTest = {}
 
 const formKey = (specName, oneIndex) =>
-  `${specName} ${oneIndex}`
+  `${escapeQuotes(specName)} ${oneIndex}`
 
 function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
   const relativePath = fs.fromCurrentFolder(file)

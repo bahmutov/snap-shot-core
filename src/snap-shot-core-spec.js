@@ -43,6 +43,17 @@ describe('snap-shot-core', () => {
     la(is.fn(snapShotCore))
   })
 
+  it.only('handles single quote in the name', () => {
+    snapShotCore({
+      what: 42,
+      file,
+      specName: "has single quote -> ' <-",
+      compare: compareFn,
+      ext: snapShotExtension,
+      opts
+    })
+  })
+
   it('saves snapshot object', () => {
     const what = {
       foo: 'bar'

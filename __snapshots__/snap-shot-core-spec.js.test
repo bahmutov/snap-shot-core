@@ -1,8 +1,4 @@
-exports['my test 1'] = {
-  "foo": "bar"
-}
+exports['has single quote -> ' <- 1'] = 42
 
-exports['can store derived value 1'] = 80
-
-exports['typeof example 1'] = "function"
+exports['has single quote -> \' <- 1'] = 42
 

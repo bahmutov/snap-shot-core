@@ -29,6 +29,9 @@ function loadSnaps (snapshotPath) {
     console.error('Could not load file', full)
     console.error(source)
     console.error(e)
+    if (e instanceof SyntaxError) {
+      throw e
+    }
     return {}
   }
 }
