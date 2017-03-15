@@ -43,7 +43,7 @@ describe('snap-shot-core', () => {
     la(is.fn(snapShotCore))
   })
 
-  it.only('handles single quote in the name', () => {
+  it('handles single quote in the name', () => {
     snapShotCore({
       what: 42,
       file,

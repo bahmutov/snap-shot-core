@@ -106,6 +106,10 @@ snapShot({
 })
 ```
 
+## Debugging
+
+Run the code with `DEBUG=snap-shot-core` option to see more log messages.
+
 ### Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2017

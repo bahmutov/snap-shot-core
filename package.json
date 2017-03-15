@@ -11,6 +11,8 @@
         "npm prune",
         "npm run deps",
         "npm test",
+        "echo Running unit tests again to check file load",
+        "npm test",
         "npm run ban"
       ],
       "pre-push": [
