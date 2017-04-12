@@ -57,6 +57,14 @@ function storeValue ({file, specName, index, value, ext, opts = {}}) {
   la(is.unemptyString(specName), 'missing spec name', specName)
   la(is.positive(index), 'missing snapshot index', file, specName, index)
 
+  if (opts.ci) {
+    throw new Error('Cannot store new snapshot value\n' +
+      'in ' + file + '\n' +
+      'for ' + specName + '\n' +
+      'when running on CI (opts.ci = 1)\n' +
+      'see https://github.com/bahmutov/snap-shot-core/issues/5')
+  }
+
   const snapshots = fs.loadSnapshots(file, ext)
   const key = formKey(specName, index)
   snapshots[key] = value

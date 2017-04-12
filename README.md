@@ -89,12 +89,14 @@ from the environment variables.
 * `show` - log snapshot value when saving new one
 * `dryRun` - only show the new snapshot value, but do not save it
 * `update` - override snapshot value with the new one if there is difference
+* `ci` - the tests are running on CI, which should disallow *saving snapshots*
 
 ```js
 const opts = {
   show: Boolean(process.env.SHOW),
   dryRun: Boolean(process.env.DRY),
-  update: Boolean(process.env.UPDATE)
+  update: Boolean(process.env.UPDATE),
+  ci: Boolean(process.env.CI)
 }
 snapShot({
   what,

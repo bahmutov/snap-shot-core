@@ -8,7 +8,8 @@ const path = require('path')
 const opts = {
   show: Boolean(process.env.SHOW),
   dryRun: Boolean(process.env.DRY),
-  update: Boolean(process.env.UPDATE)
+  update: Boolean(process.env.UPDATE),
+  ci: Boolean(process.env.CI)
 }
 
 const compareFn = ({expected, value}) => {
@@ -111,5 +112,21 @@ describe('snap-shot-core', () => {
       opts
     })
     la(out === 'function', 'expected type', out)
+  })
+
+  it('CI does not allow saving', function () {
+    const what = {
+      foo: 'bar'
+    }
+    la(is.raises(function snapshotOnCi () {
+      snapShotCore({
+        what,
+        file,
+        specName: 'ci test',
+        compare: compareFn,
+        ext: snapShotExtension,
+        opts: {ci: true}
+      })
+    }))
   })
 })
