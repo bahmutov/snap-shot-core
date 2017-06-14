@@ -154,4 +154,12 @@ describe('snap-shot-core', () => {
       specName: 'default compare'
     })
   })
+
+  it('allows passing __filename', () => {
+    snapShotCore({
+      what: {foo: 'bar'},
+      __filename,
+      specName: 'default compare'
+    })
+  })
 })

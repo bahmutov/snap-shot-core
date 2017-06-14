@@ -30,6 +30,7 @@ const formKey = (specName, oneIndex) =>
   `${specName} ${oneIndex}`
 
 function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
+  la(is.unemptyString(file), 'missing file to find spec for', file)
   const relativePath = fs.fromCurrentFolder(file)
   if (opts.update) {
     // let the new value replace the current value
@@ -88,6 +89,7 @@ const isPromise = x => is.object(x) && is.fn(x.then)
 
 function snapShotCore ({what,
   file,
+  __filename,
   specName,
   store = identity,
   compare = utils.compare,
@@ -95,7 +97,8 @@ function snapShotCore ({what,
   ext = '.snapshot',
   opts = {}
 }) {
-  la(is.unemptyString(file), 'missing file', file)
+  const fileParameter = file || __filename
+  la(is.unemptyString(fileParameter), 'missing file', fileParameter)
   la(is.unemptyString(specName), 'missing specName', specName)
   la(is.fn(compare), 'missing compare function', compare)
   la(is.fn(store), 'invalid store function', store)
@@ -107,6 +110,7 @@ function snapShotCore ({what,
   if (ext) {
     la(ext[0] === '.', 'extension should start with .', ext)
   }
+  debug(`file "${fileParameter} spec "${specName}`)
 
   const setOrCheckValue = any => {
     const index = snapshotIndex({specName, counters: snapshotsPerTest})
@@ -117,7 +121,7 @@ function snapShotCore ({what,
 
     const value = strip(any)
     const expected = findStoredValue({
-      file,
+      file: fileParameter,
       specName,
       index,
       ext,
@@ -126,7 +130,7 @@ function snapShotCore ({what,
     if (expected === undefined) {
       const storedValue = store(value)
       storeValue({
-        file,
+        file: fileParameter,
         specName,
         index,
         value: storedValue,
