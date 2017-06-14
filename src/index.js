@@ -90,7 +90,7 @@ function snapShotCore ({what,
   file,
   specName,
   store = identity,
-  compare,
+  compare = utils.compare,
   raiser,
   ext = '.snapshot',
   opts = {}

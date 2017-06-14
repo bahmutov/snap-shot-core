@@ -24,7 +24,7 @@ const out = snapShot({
   file: __filename,
   specName: 'my test', // or whatever name you want to give,
   store, // optional function to preprocess the value before storing
-  compare: compareFn,
+  compare: compareFn, // optional function that compares values
   raiser: raiseErrorFn, // optional
   ext: '.test' // default value is '.snapshot'
 })
@@ -73,6 +73,10 @@ const compareFn = ({expected, value}) => {
   }
 }
 ```
+
+The above function will be used by default or you can pass your own function
+that expects `({expectd, value})` and returns either `{valid: true}` or
+`{valid: false, message: 'to throw as error'}`
 
 ## Raise function
 

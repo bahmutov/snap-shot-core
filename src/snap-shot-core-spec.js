@@ -146,4 +146,12 @@ describe('snap-shot-core', () => {
     })
     la(called, 'customer raiser function was called')
   })
+
+  it('has default compare function', () => {
+    snapShotCore({
+      what: {foo: 'bar'},
+      file,
+      specName: 'default compare'
+    })
+  })
 })

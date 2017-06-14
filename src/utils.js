@@ -23,7 +23,22 @@ function strip (o) {
   return JSON.parse(JSON.stringify(o))
 }
 
+function compare ({expected, value}) {
+  const e = JSON.stringify(expected)
+  const v = JSON.stringify(value)
+  if (e === v) {
+    return {
+      valid: true
+    }
+  }
+  return {
+    valid: false,
+    message: `${e} !== ${v}`
+  }
+}
+
 module.exports = {
   snapshotIndex,
-  strip
+  strip,
+  compare
 }
