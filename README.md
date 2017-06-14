@@ -25,6 +25,7 @@ const out = snapShot({
   specName: 'my test', // or whatever name you want to give,
   store, // optional function to preprocess the value before storing
   compare: compareFn,
+  raiser: raiseErrorFn, // optional
   ext: '.test' // default value is '.snapshot'
 })
 ```
@@ -72,6 +73,24 @@ const compareFn = ({expected, value}) => {
   }
 }
 ```
+
+## Raise function
+
+Default function will compare current and loaded values using `compare`
+function and if the values are different will throw an error. You can provide
+your own function to fail a test differently. Your function will be called
+with these parameters
+
+```js
+raiser({
+  value,    // current value
+  expected, // loaded value
+  specName, // the name of the test
+  compare   // compare function
+})
+```
+
+Default `raiser` function just throws an Error with good message.
 
 ## Returned value
 

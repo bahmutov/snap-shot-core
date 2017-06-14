@@ -8,3 +8,5 @@ exports['can store derived value 1'] = 80
 
 exports['typeof example 1'] = "function"
 
+exports['customer raiser function 1'] = 42
+

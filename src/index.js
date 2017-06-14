@@ -91,6 +91,7 @@ function snapShotCore ({what,
   specName,
   store = identity,
   compare,
+  raiser,
   ext = '.snapshot',
   opts = {}
 }) {
@@ -98,6 +99,10 @@ function snapShotCore ({what,
   la(is.unemptyString(specName), 'missing specName', specName)
   la(is.fn(compare), 'missing compare function', compare)
   la(is.fn(store), 'invalid store function', store)
+  if (!raiser) {
+    raiser = fs.raiseIfDifferent
+  }
+  la(is.fn(raiser), 'invalid raiser function', raiser)
 
   if (ext) {
     la(ext[0] === '.', 'extension should start with .', ext)
@@ -132,7 +137,7 @@ function snapShotCore ({what,
     }
 
     debug('found snapshot for "%s", value', specName, expected)
-    fs.raiseIfDifferent({
+    raiser({
       value,
       expected,
       specName,

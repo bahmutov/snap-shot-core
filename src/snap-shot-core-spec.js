@@ -129,4 +129,21 @@ describe('snap-shot-core', () => {
       })
     }))
   })
+
+  it('can use custom raiser function', function () {
+    let called
+    function raiser () {
+      called = true
+    }
+
+    snapShotCore({
+      what: 42,
+      file,
+      specName: 'customer raiser function',
+      ext: snapShotExtension,
+      raiser,
+      compare: compareFn
+    })
+    la(called, 'customer raiser function was called')
+  })
 })
