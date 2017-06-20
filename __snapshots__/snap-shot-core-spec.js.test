@@ -10,3 +10,5 @@ exports['typeof example 1'] = "function"
 
 exports['customer raiser function 1'] = 42
 
+exports['counters can be restored to zero 1'] = "A"
+
