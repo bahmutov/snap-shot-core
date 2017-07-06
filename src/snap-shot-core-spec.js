@@ -162,4 +162,41 @@ describe('snap-shot-core', () => {
       specName: 'default compare'
     })
   })
+
+  it('counters can be restored to zero', function () {
+    let called
+    function raiser () {
+      called = true
+    }
+    const specName = this.test.title
+    const filename = path.join(process.cwd(),
+      '__snapshots__/snap-shot-core-spec.js.test')
+
+    // first snapshot
+    snapShotCore({
+      what: 'A',
+      __filename,
+      specName,
+      ext: snapShotExtension
+    })
+
+    la(is.fn(snapShotCore.restore), '"restore" shoudl be a function')
+
+    // restore snapshot counters
+    snapShotCore.restore()
+
+    // this would repeat first snapshot (and it should fail)
+    snapShotCore({
+      what: 'B',
+      __filename,
+      specName,
+      raiser,
+      ext: snapShotExtension
+    })
+
+    let snapshot = require(filename)
+    la(snapshot[specName + ' 1'] === 'A', 'first snapshot should be saved "', specName, ' 1"')
+    la(!snapshot[specName + ' 2'], 'second snapshot should not be saved "', specName, ' 2"')
+    la(called, 'second snapshot should fail instead')
+  })
 })

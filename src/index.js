@@ -25,10 +25,14 @@ if (isNode) {
 }
 
 // keeps track how many "snapshot" calls were there per test
-const snapshotsPerTest = {}
+var snapshotsPerTest = {}
 
 const formKey = (specName, oneIndex) =>
   `${specName} ${oneIndex}`
+
+function restore () {
+  snapshotsPerTest = {}
+}
 
 function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
   la(is.unemptyString(file), 'missing file to find spec for', file)
@@ -168,5 +172,7 @@ if (isBrowser) {
   la(is.fn(fs.init), 'browser file system is missing init', fs)
   snapShotCore.init = fs.init
 }
+
+snapShotCore.restore = restore
 
 module.exports = snapShotCore

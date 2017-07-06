@@ -5,4 +5,3 @@ exports['default compare 1'] = {
 exports['default compare 2'] = {
   "foo": "bar"
 }
-
