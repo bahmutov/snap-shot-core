@@ -81,22 +81,22 @@
   },
   "devDependencies": {
     "ban-sensitive-files": "1.9.0",
-    "dependency-check": "2.8.0",
+    "dependency-check": "2.9.1",
     "deps-ok": "1.2.0",
-    "dont-crack": "1.1.1",
+    "dont-crack": "1.2.1",
     "git-issues": "1.3.1",
     "license-checker": "9.0.3",
-    "mocha": "3.2.0",
+    "mocha": "3.4.2",
     "next-update-travis": "1.2.1",
     "nsp": "2.6.3",
-    "pre-git": "3.14.0",
+    "pre-git": "3.15.0",
     "semantic-release": "^6.3.6",
     "simple-commit-message": "3.0.2",
     "standard": "8.6.0"
   },
   "dependencies": {
     "check-more-types": "2.24.0",
-    "debug": "2.6.3",
+    "debug": "2.6.8",
     "escape-quotes": "1.0.2",
     "lazy-ass": "1.6.0",
     "mkdirp": "0.5.1"
