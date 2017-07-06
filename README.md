@@ -131,6 +131,9 @@ snapShot({
 })
 ```
 
+If `opts.ci` is not set, it will use [is-ci](https://github.com/watson/is-ci)
+to determine if running on CI or not.
+
 ## Debugging
 
 Run the code with `DEBUG=snap-shot-core` option to see more log messages.

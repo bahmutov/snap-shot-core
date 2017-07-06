@@ -5,6 +5,7 @@ const debugSave = require('debug')('save')
 const la = require('lazy-ass')
 const is = require('check-more-types')
 const utils = require('./utils')
+const isCI = require('is-ci')
 const {snapshotIndex, strip} = utils
 
 const isNode = Boolean(require('fs').existsSync)
@@ -106,6 +107,11 @@ function snapShotCore ({what,
     raiser = fs.raiseIfDifferent
   }
   la(is.fn(raiser), 'invalid raiser function', raiser)
+
+  if (!('ci' in opts)) {
+    debug('set CI flag to %s', isCI)
+    opts.ci = isCI
+  }
 
   if (ext) {
     la(ext[0] === '.', 'extension should start with .', ext)
