@@ -9,6 +9,7 @@ node_js:
 before_script:
   - npm prune
 script:
+  - ./next-update-travis.sh
   - npm test
   - echo "Running unit tests again"
   - npm test
