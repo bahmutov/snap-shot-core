@@ -135,6 +135,29 @@ snapShot({
 
 Run the code with `DEBUG=snap-shot-core` option to see more log messages.
 
+## Testing in watch mode
+
+In case you execute your tests in watch mode and you notice the snapshots are always new-created for the same set of tests, then you need to restore the counters per file.
+
+tape example:
+
+```js
+//foo.test.js
+const test = require('tape');
+const snapShot = require('snap-shot-core')
+
+test.onFinish(snapShot.restore)
+
+test('one test', function (t) {
+    t.plan(1)
+    snapShot({
+        what: 1,
+        file: __filename,
+        specName: 'one test'
+    })
+})
+```
+
 ### Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2017
