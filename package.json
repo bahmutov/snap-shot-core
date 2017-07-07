@@ -56,9 +56,6 @@
     "type": "git",
     "url": "https://github.com/bahmutov/snap-shot-core.git"
   },
-  "release": {
-    "generateNotes": "github-post-release"
-  },
   "scripts": {
     "ban": "ban",
     "deps": "deps-ok && dependency-check .",
@@ -74,6 +71,7 @@
   },
   "release": {
     "analyzeCommits": "simple-commit-message",
+    "generateNotes": "github-post-release",
     "verifyRelease": {
       "path": "dont-crack",
       "test-against": [
