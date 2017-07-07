@@ -87,11 +87,11 @@
     "git-issues": "1.3.1",
     "license-checker": "12.0.0",
     "mocha": "3.4.2",
-    "next-update-travis": "1.2.1",
+    "next-update-travis": "1.4.0",
     "nsp": "2.6.3",
     "pre-git": "3.15.0",
     "semantic-release": "^6.3.6",
-    "simple-commit-message": "3.0.2",
+    "simple-commit-message": "3.1.0",
     "standard": "8.6.0"
   },
   "dependencies": {

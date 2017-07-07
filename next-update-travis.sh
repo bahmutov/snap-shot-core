@@ -34,7 +34,9 @@ if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then
   if git diff --name-only | grep package.json > /dev/null; then
     echo "There are new versions of dependencies 💪"
     git add package.json
-    git diff package.json
+    echo "----------- package.json diff -------------"
+    git diff --staged
+    echo "-------------------------------------------"
     git config --global user.email "next-update@ci.com"
     git config --global user.name "next-update"
     git commit -m "chore(deps): upgrade dependencies using next-update"
