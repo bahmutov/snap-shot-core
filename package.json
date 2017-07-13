@@ -101,6 +101,7 @@
     "debug": "2.6.8",
     "escape-quotes": "1.0.2",
     "is-ci": "1.0.10",
+    "jsesc": "2.5.1",
     "lazy-ass": "1.6.0",
     "mkdirp": "0.5.1"
   }
