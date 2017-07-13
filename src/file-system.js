@@ -8,6 +8,7 @@ const is = require('check-more-types')
 const mkdirp = require('mkdirp')
 const vm = require('vm')
 const escapeQuotes = require('escape-quotes')
+const jsesc = require('jsesc')
 
 const cwd = process.cwd()
 const fromCurrentFolder = path.relative.bind(null, cwd)
@@ -71,7 +72,11 @@ function saveSnapshots (specFile, snapshots, ext) {
   let s = ''
   Object.keys(snapshots).forEach(testName => {
     const value = snapshots[testName]
-    const serialized = JSON.stringify(value, null, 2)
+    const serialized = jsesc(value, {
+      json: true,
+      compact: false,
+      indent: '  '
+    })
     s += `exports['${escapeQuotes(testName)}'] = ${serialized}\n\n`
   })
   fs.writeFileSync(filename, s, 'utf8')

@@ -199,4 +199,12 @@ describe('snap-shot-core', () => {
     la(!snapshot[specName + ' 2'], 'second snapshot should not be saved "', specName, ' 2"')
     la(called, 'second snapshot should fail instead')
   })
+
+  it('escapes unicode sequences', () => {
+    snapShotCore({
+      what: '\u2028 \u270C\uFE0F',
+      __filename,
+      specName: 'unicode'
+    })
+  })
 })
