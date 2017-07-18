@@ -71,6 +71,7 @@ function saveSnapshots (specFile, snapshots, ext) {
 
   let s = ''
   Object.keys(snapshots).forEach(testName => {
+    debug(`snapshot name "${testName}"`)
     const value = snapshots[testName]
     const serialized = jsesc(value, {
       json: true,

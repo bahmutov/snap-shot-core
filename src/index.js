@@ -75,7 +75,7 @@ function storeValue ({file, specName, index, value, ext, opts = {}}) {
 
   if (!opts.dryRun) {
     fs.saveSnapshots(file, snapshots, ext)
-    debug('saved updated snapshot %d for spec %s', index, specName)
+    debug('saved updated snapshot %d for spec "%s"', index, specName)
 
     debugSave('Saved for "%s %d" snapshot\n%s',
       specName, index, JSON.stringify(value, null, 2))
