@@ -90,10 +90,10 @@
     "license-checker": "12.1.0",
     "mocha": "3.4.2",
     "next-update-travis": "1.5.2",
-    "nsp": "2.6.3",
+    "nsp": "2.7.0",
     "pre-git": "3.15.0",
     "semantic-release": "^6.3.6",
-    "simple-commit-message": "3.2.0",
+    "simple-commit-message": "3.3.0",
     "standard": "8.6.0"
   },
   "dependencies": {
