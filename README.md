@@ -162,6 +162,16 @@ test('one test', function (t) {
 })
 ```
 
+You can restore / reset a counter for a particular test
+
+```js
+const snapShot = require('snap-shot-core')
+snapShot.restore({
+  file: __filename,
+  specName: 'this test'
+})
+```
+
 ### Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2017

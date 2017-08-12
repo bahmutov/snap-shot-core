@@ -30,8 +30,17 @@ var snapshotsPerTest = {}
 const formKey = (specName, oneIndex) =>
   `${specName} ${oneIndex}`
 
-function restore () {
-  snapshotsPerTest = {}
+function restore (options) {
+  if (!options) {
+    debug('restoring all counters')
+    snapshotsPerTest = {}
+  } else {
+    const {file, specName} = options
+    la(is.unemptyString(file), 'missing file', options)
+    la(is.unemptyString(specName), 'missing specName', options)
+    debug('restoring counter for file "%s" test "%s"', file, specName)
+    delete snapshotsPerTest[specName]
+  }
 }
 
 function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
@@ -115,7 +124,11 @@ function snapShotCore ({what,
   debug(`file "${fileParameter} spec "${specName}`)
 
   const setOrCheckValue = any => {
-    const index = snapshotIndex({specName, counters: snapshotsPerTest})
+    const index = snapshotIndex({
+      counters: snapshotsPerTest,
+      file: fileParameter,
+      specName
+    })
     la(is.positive(index), 'invalid snapshot index', index,
       'for\n', specName, '\ncounters', snapshotsPerTest)
     debug('spec "%s" snapshot is #%d',
