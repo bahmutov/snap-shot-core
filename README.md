@@ -81,9 +81,11 @@ const compareTypes = ({expected, value}) =>
 ```
 
 Note input is an object `{expected, value}` and if there is a difference
-you should describe it as a string `Result.Error(<difference string>)`
+you should describe it as a string `Result.Error(<difference string>)`.
+Why does it return a `Result`? Because it makes [life easier][result post].
 
 [result]: http://folktale.origamitower.com/api/v2.0.0/en/folktale.result.html
+[result post]: https://glebbahmutov.com/blog/use-a-little-bit-of-fp/#result-either-for-utility-functions
 
 ## Raise function
 
