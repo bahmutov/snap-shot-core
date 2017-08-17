@@ -63,6 +63,21 @@ function loadSnapshots (specFile, ext) {
   return snapshots
 }
 
+function exportText (name, value) {
+  la(is.unemptyString(name), 'expected name', name)
+  la(is.unemptyString(value), 'expected string value', value)
+  return `exports['${name}'] = \`${value}\`\n\n`
+}
+
+function exportObject (name, value) {
+  const serialized = jsesc(value, {
+    json: true,
+    compact: false,
+    indent: '  '
+  })
+  return `exports['${name}'] = ${serialized}\n\n`
+}
+
 function saveSnapshots (specFile, snapshots, ext) {
   mkdirp.sync(snapshotsFolder)
   const filename = fileForSpec(specFile, ext)
@@ -73,12 +88,12 @@ function saveSnapshots (specFile, snapshots, ext) {
   Object.keys(snapshots).forEach(testName => {
     debug(`snapshot name "${testName}"`)
     const value = snapshots[testName]
-    const serialized = jsesc(value, {
-      json: true,
-      compact: false,
-      indent: '  '
-    })
-    s += `exports['${escapeQuotes(testName)}'] = ${serialized}\n\n`
+    const escapedName = escapeQuotes(testName)
+    if (is.string(value)) {
+      s += exportText(escapedName, value)
+    } else {
+      s += exportObject(escapedName, value)
+    }
   })
   fs.writeFileSync(filename, s, 'utf8')
   return snapshots

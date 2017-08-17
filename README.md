@@ -51,6 +51,10 @@ snapShot({
 })
 ```
 
+Note: by default multi line text is saves using ES6 template string, while
+everything else is saved using normal serialization using
+[jsesc](https://github.com/mathiasbynens/jsesc).
+
 ## Compare function
 
 A function to compare expected and actual value should return `Result`
