@@ -85,8 +85,7 @@ function saveSnapshots (specFile, snapshots, ext) {
 }
 
 const isValidCompareResult = is.schema({
-  valid: is.bool,
-  message: is.maybe.string
+  orElse: is.fn
 })
 
 // expected = schema we expect value to adhere to
@@ -99,12 +98,12 @@ function raiseIfDifferent ({value, expected, specName, compare}) {
   la(isValidCompareResult(result), 'invalid compare result', result,
     'when comparing value\n', value, 'with expected\n', expected)
 
-  if (!result.valid) {
+  result.orElse(message => {
     debug('Test "%s" snapshot difference', specName)
-    la(is.unemptyString(result.message), 'missing result message', result)
-    console.log(result.message)
-    throw new Error(result.message)
-  }
+    la(is.unemptyString(message), 'missing err string', message)
+    console.log(message)
+    throw new Error(message)
+  })
 }
 
 module.exports = {

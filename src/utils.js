@@ -37,8 +37,15 @@ function compare ({expected, value}) {
   return Result.Error(`${e} !== ${v}`)
 }
 
+const sameTypes = (a, b) => typeof expected === typeof value
+
+const compareTypes = ({expected, value}) =>
+  sameTypes(expected, value) ? Result.Ok() : Result.Error('no message')
+
 module.exports = {
   snapshotIndex,
   strip,
-  compare
+  compare,
+  sameTypes,
+  compareTypes
 }

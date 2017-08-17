@@ -43,10 +43,7 @@ following (paired with the right `compare` function).
 const store = x => typeof x
 // expected - previously saved "type of" value
 // value - current original value
-const compare = ({expected, value}) => ({
-  valid: typeof value === expected,
-  message: 'check the type'
-})
+const compare = ({expected, value}) => // return Result
 snapShot({
   what,
   store,
@@ -56,28 +53,37 @@ snapShot({
 
 ## Compare function
 
-The comparator function needs to compare two values and return an object.
-Here is an example
+A function to compare expected and actual value should return `Result`
+instance, preferably [Folktable.Result][result]. A simple one could be
 
 ```js
-const compareFn = ({expected, value}) => {
+const Result = require('folktale/result')
+function compare ({expected, value}) {
   const e = JSON.stringify(expected)
   const v = JSON.stringify(value)
   if (e === v) {
-    return {
-      valid: true
-    }
+    return Result.Ok()
   }
-  return {
-    valid: false,
-    message: `${e} !== ${v}`
-  }
+  return Result.Error(`${e} !== ${v}`)
 }
 ```
 
-The above function will be used by default or you can pass your own function
-that expects `({expectd, value})` and returns either `{valid: true}` or
-`{valid: false, message: 'to throw as error'}`
+Another one, that compares values by type could be even simpler
+
+```js
+const sameTypes = (a, b) =>
+  typeof expected === typeof value
+
+const compareTypes = ({expected, value}) =>
+  sameTypes(expected, value)
+    ? Result.Ok()
+    : Result.Error('types are different')
+```
+
+Note input is an object `{expected, value}` and if there is a difference
+you should describe it as a string `Result.Error(<difference string>)`
+
+[result]: http://folktale.origamitower.com/api/v2.0.0/en/folktale.result.html
 
 ## Raise function
 
@@ -100,7 +106,8 @@ Default `raiser` function just throws an Error with good message.
 ## Returned value
 
 The `snapShotCore` function returns the *expected* value.
-If this is the first time, it will be `store(what)` value. Otherwise it will be the loaded `expected` value.
+If this is the first time, it will be `store(what)` value.
+Otherwise it will be the loaded `expected` value.
 
 [snap-shot]: https://github.com/bahmutov/snap-shot
 [schema-shot]: https://github.com/bahmutov/schema-shot

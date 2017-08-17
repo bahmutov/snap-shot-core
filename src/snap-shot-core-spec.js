@@ -4,33 +4,13 @@ const la = require('lazy-ass')
 const is = require('check-more-types')
 const fs = require('fs')
 const path = require('path')
+const utils = require('./utils')
 
 const opts = {
   show: Boolean(process.env.SHOW),
   dryRun: Boolean(process.env.DRY),
   update: Boolean(process.env.UPDATE),
   ci: Boolean(process.env.CI)
-}
-
-const compareFn = ({expected, value}) => {
-  const e = JSON.stringify(expected)
-  const v = JSON.stringify(value)
-  if (e === v) {
-    return {
-      valid: true
-    }
-  }
-  return {
-    valid: false,
-    message: `${e} !== ${v}`
-  }
-}
-
-const areSameType = ({expected, value}) => {
-  return {
-    valid: typeof expected === typeof value,
-    message: 'no message'
-  }
 }
 
 const file = __filename
@@ -49,7 +29,7 @@ describe('snap-shot-core', () => {
       what: 42,
       file,
       specName: "has single quote -> ' <-",
-      compare: compareFn,
+      compare: utils.compare,
       ext: snapShotExtension,
       opts
     })
@@ -63,7 +43,7 @@ describe('snap-shot-core', () => {
       what,
       file,
       specName: 'my test',
-      compare: compareFn,
+      compare: utils.compare,
       ext: snapShotExtension,
       opts
     })
@@ -85,7 +65,7 @@ describe('snap-shot-core', () => {
       file,
       specName,
       store,
-      compare: areSameType,
+      compare: utils.compareTypes,
       ext: snapShotExtension,
       opts
     })
@@ -95,10 +75,6 @@ describe('snap-shot-core', () => {
   it('typeof example', function () {
     const specName = this.test.title
     const store = x => typeof x
-    const compare = ({expected, value}) => ({
-      valid: typeof value === expected,
-      message: 'check the type'
-    })
     // let us try snapshotting a function
     // but we only care about the "type" of the value
     const what = () => 'noop'
@@ -107,7 +83,7 @@ describe('snap-shot-core', () => {
       file,
       specName,
       store,
-      compare,
+      compare: utils.compareTypes,
       ext: snapShotExtension,
       opts
     })
@@ -123,7 +99,7 @@ describe('snap-shot-core', () => {
         what,
         file,
         specName: 'ci test',
-        compare: compareFn,
+        compare: utils.compare,
         ext: snapShotExtension,
         opts: {ci: true}
       })
@@ -142,7 +118,7 @@ describe('snap-shot-core', () => {
       specName: 'customer raiser function',
       ext: snapShotExtension,
       raiser,
-      compare: compareFn
+      compare: utils.compare
     })
     la(called, 'customer raiser function was called')
   })
