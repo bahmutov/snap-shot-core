@@ -95,7 +95,7 @@
     "semantic-release": "^6.3.6",
     "simple-commit-message": "3.3.1",
     "snap-shot-it": "1.4.0",
-    "standard": "8.6.0"
+    "standard": "10.0.3"
   },
   "dependencies": {
     "check-more-types": "2.24.0",
