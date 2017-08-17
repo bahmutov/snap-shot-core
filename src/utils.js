@@ -2,6 +2,7 @@
 
 const la = require('lazy-ass')
 const is = require('check-more-types')
+const Result = require('folktale/result')
 
 // TODO: we should also consider the file spec name + test name
 // not just spec name (which is test name here)
@@ -31,18 +32,20 @@ function compare ({expected, value}) {
   const e = JSON.stringify(expected)
   const v = JSON.stringify(value)
   if (e === v) {
-    return {
-      valid: true
-    }
+    return Result.Ok()
   }
-  return {
-    valid: false,
-    message: `${e} !== ${v}`
-  }
+  return Result.Error(`${e} !== ${v}`)
 }
+
+const sameTypes = (a, b) => typeof expected === typeof value
+
+const compareTypes = ({expected, value}) =>
+  sameTypes(expected, value) ? Result.Ok() : Result.Error('no message')
 
 module.exports = {
   snapshotIndex,
   strip,
-  compare
+  compare,
+  sameTypes,
+  compareTypes
 }
