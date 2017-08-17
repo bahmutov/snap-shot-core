@@ -58,9 +58,14 @@ describe('compare', () => {
     snapshot(compare({expected, value}))
   })
 
+  const raise = () => {
+    throw new Error('Cannot reach this')
+  }
   it('snapshots error value', () => {
     const expected = 'foo'
     const value = 'bar'
-    compare({expected, value}).orElse(snapshot)
+    compare({expected, value})
+      .map(raise)
+      .orElse(snapshot)
   })
 })
