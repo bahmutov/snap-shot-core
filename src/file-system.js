@@ -44,7 +44,9 @@ function fileForSpec (specFile, ext) {
   const specName = path.basename(specFile)
   let filename = path.join(snapshotsFolder, specName)
   if (ext) {
-    filename += ext
+    if (!filename.endsWith(ext)) {
+      filename += ext
+    }
   }
   return path.resolve(filename)
 }
@@ -126,5 +128,6 @@ module.exports = {
   fromCurrentFolder,
   loadSnapshots,
   saveSnapshots,
-  raiseIfDifferent
+  raiseIfDifferent,
+  fileForSpec
 }
