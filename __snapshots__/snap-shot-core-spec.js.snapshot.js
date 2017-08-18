@@ -6,5 +6,5 @@ exports['default compare 2'] = {
   "foo": "bar"
 }
 
-exports['unicode 1'] = "\u2028 \u270C\uFE0F"
+exports['unicode 1'] = `  ✌️`
 

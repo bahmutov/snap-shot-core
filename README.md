@@ -27,7 +27,7 @@ const out = snapShot({
   store, // optional function to preprocess the value before storing
   compare: compareFn, // optional function that compares values
   raiser: raiseErrorFn, // optional
-  ext: '.test' // default value is '.snapshot'
+  ext: '.test' // default value is '.snapshot.js'
 })
 ```
 

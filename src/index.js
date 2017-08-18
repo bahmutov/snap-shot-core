@@ -100,7 +100,7 @@ function snapShotCore ({what,
   store = identity,
   compare = utils.compare,
   raiser,
-  ext = '.snapshot',
+  ext = '.snapshot.js',
   opts = {}
 }) {
   const fileParameter = file || __filename
