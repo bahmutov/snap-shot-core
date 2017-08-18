@@ -66,12 +66,15 @@ function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
   return snapshots[key]
 }
 
-function storeValue ({file, specName, index, value, ext, opts = {}}) {
+function storeValue ({file, specName, index, value, ext, comment, opts = {}}) {
   la(value !== undefined, 'cannot store undefined value')
   la(is.unemptyString(file), 'missing filename', file)
   la(is.unemptyString(specName), 'missing spec name', specName)
   la(is.positive(index), 'missing snapshot index', file, specName, index)
+  la(is.maybe.unemptyString(comment), 'invalid comment to store', comment)
 
+  // how to serialize comments?
+  // as comments above each key?
   const snapshots = fs.loadSnapshots(file, ext)
   const key = formKey(specName, index)
   snapshots[key] = value
@@ -101,6 +104,7 @@ function snapShotCore ({what,
   compare = utils.compare,
   raiser,
   ext = '.snapshot.js',
+  comment,
   opts = {}
 }) {
   const fileParameter = file || __filename
@@ -112,6 +116,7 @@ function snapShotCore ({what,
     raiser = fs.raiseIfDifferent
   }
   la(is.fn(raiser), 'invalid raiser function', raiser)
+  la(is.maybe.unemptyString(comment), 'wrong comment type', comment)
 
   if (!('ci' in opts)) {
     debug('set CI flag to %s', isCI)
@@ -162,6 +167,7 @@ function snapShotCore ({what,
         index,
         value: storedValue,
         ext,
+        comment,
         opts
       })
       return storedValue

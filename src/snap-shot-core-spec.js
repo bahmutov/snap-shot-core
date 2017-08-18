@@ -35,6 +35,16 @@ describe('snap-shot-core', () => {
     })
   })
 
+  it('stores comment', () => {
+    snapShotCore({
+      what: 42,
+      file,
+      specName: 'stores comment',
+      opts,
+      comment: 'this is a comment'
+    })
+  })
+
   it('saves snapshot object', () => {
     const what = {
       foo: 'bar'

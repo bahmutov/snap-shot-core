@@ -8,3 +8,5 @@ exports['default compare 2'] = {
 
 exports['unicode 1'] = `  ✌️`
 
+exports['stores comment 1'] = 42
+
