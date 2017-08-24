@@ -93,7 +93,7 @@
     "next-update-travis": "1.7.1",
     "nsp": "2.7.0",
     "pre-git": "3.15.3",
-    "semantic-release": "7.0.1",
+    "semantic-release": "7.0.2",
     "simple-commit-message": "3.3.1",
     "sinon": "3.2.1",
     "snap-shot-it": "1.4.0",
