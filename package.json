@@ -75,8 +75,7 @@
     "verifyRelease": {
       "path": "dont-crack",
       "test-against": [
-        "https://github.com/bahmutov/snap-shot",
-        "https://github.com/bahmutov/schema-shot"
+        "https://github.com/bahmutov/snap-shot-it"
       ]
     }
   },
