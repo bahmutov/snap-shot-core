@@ -6,11 +6,14 @@ const la = require('lazy-ass')
 const is = require('check-more-types')
 const utils = require('./utils')
 const isCI = require('is-ci')
+const R = require('ramda')
 const {snapshotIndex, strip} = utils
 
 const isNode = Boolean(require('fs').existsSync)
 const isBrowser = !isNode
 const isCypress = isBrowser && typeof cy === 'object'
+
+const DEFAULT_EXTENSION = '.snapshot.js'
 
 const identity = x => x
 
@@ -94,6 +97,31 @@ function storeValue ({file, specName, index, value, ext, comment, opts = {}}) {
   }
 }
 
+// TODO switch to async
+function pruneSnapshots ({tests, ext = DEFAULT_EXTENSION}) {
+  la(is.array(tests), 'missing tests', tests)
+  const byFilename = R.groupBy(R.prop('file'), tests)
+  debug('pruning snapshots')
+  Object.keys(byFilename).forEach(file => {
+    const specNames = byFilename[file].map(s => s.specName)
+    const snapshots = fs.loadSnapshots(file, ext)
+    if (is.empty(snapshots)) {
+      debug('empty snapshot file for', file)
+      return
+    }
+    const isPresent = (val, key) => {
+      return R.find(specName => key.startsWith(specName))(specNames)
+    }
+    const prunedSnapshots = R.pickBy(isPresent, snapshots)
+    if (R.equals(prunedSnapshots, snapshots)) {
+      debug('nothing to prune for file', file)
+      return
+    }
+    debug('saving pruned snapshot file for', file)
+    fs.saveSnapshots(file, prunedSnapshots, ext)
+  })
+}
+
 const isPromise = x => is.object(x) && is.fn(x.then)
 
 function snapShotCore ({what,
@@ -103,7 +131,7 @@ function snapShotCore ({what,
   store = identity,
   compare = utils.compare,
   raiser,
-  ext = '.snapshot.js',
+  ext = DEFAULT_EXTENSION,
   comment,
   opts = {}
 }) {
@@ -197,5 +225,6 @@ if (isBrowser) {
 }
 
 snapShotCore.restore = restore
+snapShotCore.prune = pruneSnapshots
 
 module.exports = snapShotCore

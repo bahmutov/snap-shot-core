@@ -148,6 +148,27 @@ snapShot({
 If `opts.ci` is not set, it will use [is-ci](https://github.com/watson/is-ci)
 to determine if running on CI or not.
 
+## Pruning snapshots
+
+When test names change or tests are updated, new snapshots are saved, but old ones remain
+in the snapshot file. To prune the old snapshots, the test runner can pass all current spec 
+names to prune all other ones. Just call `.prune()` method and pass the following options
+
+```
+* tests: list of current tests. Each object should have
+  file: the full test filename
+  specName: the full title of the test
+* ext: optional snapshot filename extension 
+```
+
+For example see [src/prune-spec.js](src/prune-spec.js)
+
+**note** this can still leave old snapshot files, if the spec has no tests running or
+has been renamed.
+
+**note 2** if you run tests with `.only` it will remove all other snapshots in that file.
+This is normal, you will recreated all snapshots once you run all the tests again.
+
 ## Debugging
 
 Run the code with `DEBUG=snap-shot-core` option to see more log messages.
