@@ -24,6 +24,17 @@ describe('snap-shot-core', () => {
     la(is.fn(snapShotCore))
   })
 
+  it('can save without increment the exact snapshot name', () => {
+    snapShotCore({
+      what: 43,
+      file,
+      exactSpecName: 'this should not be incremented',
+      compare: utils.compare,
+      ext: snapShotExtension,
+      opts
+    })
+  })
+
   it('handles single quote in the name', () => {
     snapShotCore({
       what: 42,

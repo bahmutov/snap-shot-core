@@ -46,7 +46,7 @@ function restore (options) {
   }
 }
 
-function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
+function findStoredValue ({file, specName, exactSpecName, index = 1, ext, opts = {}}) {
   la(is.unemptyString(file), 'missing file to find spec for', file)
   const relativePath = fs.fromCurrentFolder(file)
   if (opts.update) {
@@ -60,7 +60,7 @@ function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
     return
   }
 
-  const key = formKey(specName, index)
+  const key = exactSpecName || formKey(specName, index)
   debug('key "%s"', key)
   if (!(key in snapshots)) {
     return
@@ -69,17 +69,22 @@ function findStoredValue ({file, specName, index = 1, ext, opts = {}}) {
   return snapshots[key]
 }
 
-function storeValue ({file, specName, index, value, ext, comment, opts = {}}) {
+function storeValue ({file, specName, exactSpecName, index, value, ext, comment, opts = {}}) {
   la(value !== undefined, 'cannot store undefined value')
   la(is.unemptyString(file), 'missing filename', file)
-  la(is.unemptyString(specName), 'missing spec name', specName)
-  la(is.positive(index), 'missing snapshot index', file, specName, index)
+
+  la(is.unemptyString(specName) || is.unemptyString(exactSpecName),
+    'missing spec or exact spec name', specName, exactSpecName)
+
+  if (!exactSpecName) {
+    la(is.maybe.positive(index), 'missing snapshot index', file, specName, index)
+  }
   la(is.maybe.unemptyString(comment), 'invalid comment to store', comment)
 
   // how to serialize comments?
   // as comments above each key?
   const snapshots = fs.loadSnapshots(file, ext)
-  const key = formKey(specName, index)
+  const key = exactSpecName || formKey(specName, index)
   snapshots[key] = value
 
   if (opts.show || opts.dryRun) {
@@ -128,6 +133,7 @@ function snapShotCore ({what,
   file,
   __filename,
   specName,
+  exactSpecName, // if specified will be used without any increments
   store = identity,
   compare = utils.compare,
   raiser,
@@ -137,7 +143,11 @@ function snapShotCore ({what,
 }) {
   const fileParameter = file || __filename
   la(is.unemptyString(fileParameter), 'missing file', fileParameter)
-  la(is.unemptyString(specName), 'missing specName', specName)
+  la(is.maybe.unemptyString(specName), 'invalid specName', specName)
+  la(is.maybe.unemptyString(exactSpecName), 'invalid exactSpecName', exactSpecName)
+  la(specName || exactSpecName,
+    'missing either specName or exactSpecName')
+
   la(is.fn(compare), 'missing compare function', compare)
   la(is.fn(store), 'invalid store function', store)
   if (!raiser) {
@@ -157,20 +167,24 @@ function snapShotCore ({what,
   debug(`file "${fileParameter} spec "${specName}`)
 
   const setOrCheckValue = any => {
-    const index = snapshotIndex({
+    const index = exactSpecName ? 0 : snapshotIndex({
       counters: snapshotsPerTest,
       file: fileParameter,
-      specName
+      specName,
+      exactSpecName
     })
-    la(is.positive(index), 'invalid snapshot index', index,
-      'for\n', specName, '\ncounters', snapshotsPerTest)
-    debug('spec "%s" snapshot is #%d',
-      specName, index)
+    if (index) {
+      la(is.positive(index), 'invalid snapshot index', index,
+        'for\n', specName, '\ncounters', snapshotsPerTest)
+      debug('spec "%s" snapshot is #%d',
+        specName, index)
+    }
 
     const value = strip(any)
     const expected = findStoredValue({
       file: fileParameter,
       specName,
+      exactSpecName,
       index,
       ext,
       opts
@@ -192,6 +206,7 @@ function snapShotCore ({what,
       storeValue({
         file: fileParameter,
         specName,
+        exactSpecName,
         index,
         value: storedValue,
         ext,
@@ -201,11 +216,12 @@ function snapShotCore ({what,
       return storedValue
     }
 
-    debug('found snapshot for "%s", value', specName, expected)
+    const usedSpecName = specName || exactSpecName
+    debug('found snapshot for "%s", value', usedSpecName, expected)
     raiser({
       value,
       expected,
-      specName,
+      specName: usedSpecName,
       compare
     })
     return expected

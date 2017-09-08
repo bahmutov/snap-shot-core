@@ -169,6 +169,23 @@ has been renamed.
 **note 2** if you run tests with `.only` it will remove all other snapshots in that file.
 This is normal, you will recreated all snapshots once you run all the tests again.
 
+## Exact snapshot name
+
+Sometimes you do not want to auto increment the snapshots, or use default test name.
+In this case you can pass `exactSpecName` to just save the snapshot with that key.
+
+```js
+snapShotCore({
+  what: 42,
+  exactSpecName: 'computed value',
+  file: __filename
+})
+```
+The snapshot file will have
+```js
+exports['computed value'] = 42
+```
+
 ## Debugging
 
 Run the code with `DEBUG=snap-shot-core` option to see more log messages.
