@@ -9,6 +9,7 @@ const mkdirp = require('mkdirp')
 const vm = require('vm')
 const escapeQuotes = require('escape-quotes')
 const jsesc = require('jsesc')
+const stripIndent = require('common-tags').stripIndent
 
 const cwd = process.cwd()
 const fromCurrentFolder = path.relative.bind(null, cwd)
@@ -66,7 +67,16 @@ function loadSnapshots (specFile, ext) {
 }
 
 function exportText (name, value) {
-  la(is.unemptyString(name), 'expected name', name)
+  la(is.unemptyString(name), 'expected snapshot name, got:', name)
+  if (!is.unemptyString(value)) {
+    const message = stripIndent`
+      Cannot store empty / null / undefined string as a snapshot value.
+      Seems the value you are trying to store in a snapshot "${name}"
+      is empty. Snapshots only work well if they have actual content
+      to store. Otherwise, why bother?
+    `
+    throw new Error(message)
+  }
   la(is.unemptyString(value), 'expected string value', value)
   return `exports['${name}'] = \`${value}\`\n\n`
 }
@@ -106,6 +116,8 @@ const isValidCompareResult = is.schema({
 })
 
 // expected = schema we expect value to adhere to
+// value - what the test computed right now
+// expected - existing value loaded from snapshot
 function raiseIfDifferent ({value, expected, specName, compare}) {
   la(value, 'missing value to compare', value)
   la(expected, 'missing expected value', expected)
