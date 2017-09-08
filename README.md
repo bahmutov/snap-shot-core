@@ -186,6 +186,25 @@ The snapshot file will have
 exports['computed value'] = 42
 ```
 
+## Text snapshots
+
+When saving strings, the snapshot will be surrounded by newlines to avoid
+extra lone first line (looking like `exports["name"] = ...`). So when saving snapshot text
+
+```text
+line 1
+line 2
+```
+the snapshot file will have
+```js
+exports["name"] = `
+line 1
+line 2
+`
+```
+
+The newlines will be trimmed automatically when loading the snapshot value.
+
 ## Debugging
 
 Run the code with `DEBUG=snap-shot-core` option to see more log messages.

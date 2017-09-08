@@ -27,7 +27,7 @@ function loadSnaps (snapshotPath) {
   const source = fs.readFileSync(full, 'utf8')
   try {
     vm.runInNewContext(source, sandbox)
-    return sandbox.exports
+    return removeExtraNewLines(sandbox.exports)
   } catch (e) {
     console.error('Could not load file', full)
     console.error(source)
@@ -78,7 +78,8 @@ function exportText (name, value) {
     throw new Error(message)
   }
   la(is.unemptyString(value), 'expected string value', value)
-  return `exports['${name}'] = \`${value}\`\n\n`
+  const withNewLines = '\n' + value + '\n'
+  return `exports['${name}'] = \`${withNewLines}\`\n`
 }
 
 function exportObject (name, value) {
@@ -87,28 +88,27 @@ function exportObject (name, value) {
     compact: false,
     indent: '  '
   })
-  return `exports['${name}'] = ${serialized}\n\n`
+  return `exports['${name}'] = ${serialized}\n`
 }
 
+// returns snapshot text
 function saveSnapshots (specFile, snapshots, ext) {
   mkdirp.sync(snapshotsFolder)
   const filename = fileForSpec(specFile, ext)
   const specRelativeName = fromCurrentFolder(specFile)
   debug('saving snapshots into %s for %s', filename, specRelativeName)
 
-  let s = ''
-  Object.keys(snapshots).forEach(testName => {
+  const fragments = Object.keys(snapshots).map(testName => {
     debug(`snapshot name "${testName}"`)
     const value = snapshots[testName]
     const escapedName = escapeQuotes(testName)
-    if (is.string(value)) {
-      s += exportText(escapedName, value)
-    } else {
-      s += exportObject(escapedName, value)
-    }
+    return is.string(value)
+      ? exportText(escapedName, value)
+      : exportObject(escapedName, value)
   })
+  const s = fragments.join('\n')
   fs.writeFileSync(filename, s, 'utf8')
-  return snapshots
+  return s
 }
 
 const isValidCompareResult = is.schema({
@@ -135,11 +135,30 @@ function raiseIfDifferent ({value, expected, specName, compare}) {
   })
 }
 
+const isSurroundedByNewLines = (s) =>
+  is.string(s) && s.length > 1 && s[0] === '\n' && s[s.length - 1] === '\n'
+
+// when we save string snapshots we add extra new lines to
+// avoid long first lines
+// when loading snapshots we should remove these new lines
+// from string properties
+function removeExtraNewLines (snapshots) {
+  Object.keys(snapshots).forEach(key => {
+    const value = snapshots[key]
+    if (isSurroundedByNewLines(value)) {
+      snapshots[key] = value.substr(1, value.length - 2)
+    }
+  })
+  return snapshots
+}
+
 module.exports = {
   readFileSync: fs.readFileSync,
   fromCurrentFolder,
   loadSnapshots,
   saveSnapshots,
   raiseIfDifferent,
-  fileForSpec
+  fileForSpec,
+  exportText,
+  removeExtraNewLines
 }

@@ -42,4 +42,13 @@ describe('multi line text', () => {
       compare: compareText
     })
   })
+
+  it('does not put text on the first line of the snapshot', () => {
+    snapShotCore({
+      what: text,
+      __filename,
+      exactSpecName: 'no first line',
+      compare: compareText
+    })
+  })
 })
