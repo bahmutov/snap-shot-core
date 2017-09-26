@@ -8,8 +8,10 @@ const is = require('check-more-types')
 const mkdirp = require('mkdirp')
 const vm = require('vm')
 const escapeQuotes = require('escape-quotes')
-const jsesc = require('jsesc')
-const stripIndent = require('common-tags').stripIndent
+
+const removeExtraNewLines = require('./utils').removeExtraNewLines
+const exportText = require('./utils').exportText
+const exportObject = require('./utils').exportObject
 
 const cwd = process.cwd()
 const fromCurrentFolder = path.relative.bind(null, cwd)
@@ -66,31 +68,6 @@ function loadSnapshots (specFile, ext) {
   return snapshots
 }
 
-function exportText (name, value) {
-  la(is.unemptyString(name), 'expected snapshot name, got:', name)
-  if (!is.unemptyString(value)) {
-    const message = stripIndent`
-      Cannot store empty / null / undefined string as a snapshot value.
-      Seems the value you are trying to store in a snapshot "${name}"
-      is empty. Snapshots only work well if they have actual content
-      to store. Otherwise, why bother?
-    `
-    throw new Error(message)
-  }
-  la(is.unemptyString(value), 'expected string value', value)
-  const withNewLines = '\n' + value + '\n'
-  return `exports['${name}'] = \`${withNewLines}\`\n`
-}
-
-function exportObject (name, value) {
-  const serialized = jsesc(value, {
-    json: true,
-    compact: false,
-    indent: '  '
-  })
-  return `exports['${name}'] = ${serialized}\n`
-}
-
 // returns snapshot text
 function saveSnapshots (specFile, snapshots, ext) {
   mkdirp.sync(snapshotsFolder)
@@ -135,23 +112,6 @@ function raiseIfDifferent ({value, expected, specName, compare}) {
   })
 }
 
-const isSurroundedByNewLines = (s) =>
-  is.string(s) && s.length > 1 && s[0] === '\n' && s[s.length - 1] === '\n'
-
-// when we save string snapshots we add extra new lines to
-// avoid long first lines
-// when loading snapshots we should remove these new lines
-// from string properties
-function removeExtraNewLines (snapshots) {
-  Object.keys(snapshots).forEach(key => {
-    const value = snapshots[key]
-    if (isSurroundedByNewLines(value)) {
-      snapshots[key] = value.substr(1, value.length - 2)
-    }
-  })
-  return snapshots
-}
-
 module.exports = {
   readFileSync: fs.readFileSync,
   fromCurrentFolder,
@@ -159,6 +119,5 @@ module.exports = {
   saveSnapshots,
   raiseIfDifferent,
   fileForSpec,
-  exportText,
-  removeExtraNewLines
+  exportText
 }

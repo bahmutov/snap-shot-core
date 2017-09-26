@@ -69,3 +69,43 @@ describe('compare', () => {
       .orElse(snapshot)
   })
 })
+
+describe('exportText', () => {
+  const {exportText} = require('./utils')
+
+  it('is a function', () => {
+    la(is.fn(exportText))
+  })
+
+  it('does not put value on the first line', () => {
+    const formatted = exportText('name', 'foo')
+    const expected = "exports['name'] = `\nfoo\n`\n"
+    la(formatted === expected, 'expected\n' + expected + '\ngot\n' + formatted)
+  })
+})
+
+describe('removeExtraNewLines', () => {
+  const {removeExtraNewLines} = require('./utils')
+
+  it('is a function', () => {
+    la(is.fn(removeExtraNewLines))
+  })
+
+  it('leaves other values unchanged', () => {
+    const snapshots = {
+      foo: 'bar',
+      age: 42
+    }
+    const result = removeExtraNewLines(snapshots)
+    snapshot(result)
+  })
+
+  it('removes new lines', () => {
+    const snapshots = {
+      foo: '\nbar\n',
+      age: 42
+    }
+    const result = removeExtraNewLines(snapshots)
+    snapshot(result)
+  })
+})
