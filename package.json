@@ -90,7 +90,7 @@
     "license-checker": "13.1.0",
     "mocha": "3.5.3",
     "next-update-travis": "1.7.1",
-    "nsp": "2.8.0",
+    "nsp": "2.8.1",
     "pre-git": "3.15.3",
     "semantic-release": "7.0.2",
     "simple-commit-message": "3.3.1",
@@ -101,7 +101,7 @@
   "dependencies": {
     "check-more-types": "2.24.0",
     "common-tags": "1.4.0",
-    "debug": "3.0.1",
+    "debug": "3.1.0",
     "escape-quotes": "1.0.2",
     "folktale": "2.0.1",
     "is-ci": "1.0.10",
