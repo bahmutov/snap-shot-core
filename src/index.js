@@ -7,7 +7,8 @@ const is = require('check-more-types')
 const utils = require('./utils')
 const isCI = require('is-ci')
 const R = require('ramda')
-const {snapshotIndex, strip} = utils
+const snapshotIndex = utils.snapshotIndex
+const strip = utils.strip
 
 const isNode = Boolean(require('fs').existsSync)
 const isBrowser = !isNode
@@ -38,7 +39,8 @@ function restore (options) {
     debug('restoring all counters')
     snapshotsPerTest = {}
   } else {
-    const {file, specName} = options
+    const file = options.file
+    const specName = options.specName
     la(is.unemptyString(file), 'missing file', options)
     la(is.unemptyString(specName), 'missing specName', options)
     debug('restoring counter for file "%s" test "%s"', file, specName)
@@ -46,7 +48,21 @@ function restore (options) {
   }
 }
 
-function findStoredValue ({file, specName, exactSpecName, index = 1, ext, opts = {}}) {
+function findStoredValue (options) {
+  const file = options.file
+  const specName = options.specName
+  const exactSpecName = options.exactSpecName
+  const ext = options.ext
+  let index = options.index
+  let opts = options.opts
+
+  if (index === undefined) {
+    index = 1
+  }
+  if (opts === undefined) {
+    opts = {}
+  }
+
   la(is.unemptyString(file), 'missing file to find spec for', file)
   const relativePath = fs.fromCurrentFolder(file)
   if (opts.update) {
@@ -69,7 +85,20 @@ function findStoredValue ({file, specName, exactSpecName, index = 1, ext, opts =
   return snapshots[key]
 }
 
-function storeValue ({file, specName, exactSpecName, index, value, ext, comment, opts = {}}) {
+function storeValue (options) {
+  const file = options.file
+  const specName = options.specName
+  const exactSpecName = options.exactSpecName
+  const index = options.index
+  const value = options.value
+  const ext = options.ext
+  const comment = options.comment
+  let opts = options.opts
+
+  if (opts === undefined) {
+    opts = {}
+  }
+
   la(value !== undefined, 'cannot store undefined value')
   la(is.unemptyString(file), 'missing filename', file)
 
@@ -103,7 +132,10 @@ function storeValue ({file, specName, exactSpecName, index, value, ext, comment,
 }
 
 // TODO switch to async
-function pruneSnapshots ({tests, ext = DEFAULT_EXTENSION}) {
+function pruneSnapshots (options) {
+  const tests = options.tests
+  const ext = options.tests || DEFAULT_EXTENSION
+
   la(is.array(tests), 'missing tests', tests)
   const byFilename = R.groupBy(R.prop('file'), tests)
   debug('pruning snapshots')
@@ -129,18 +161,19 @@ function pruneSnapshots ({tests, ext = DEFAULT_EXTENSION}) {
 
 const isPromise = x => is.object(x) && is.fn(x.then)
 
-function snapShotCore ({what,
-  file,
-  __filename,
-  specName,
-  exactSpecName, // if specified will be used without any increments
-  store = identity,
-  compare = utils.compare,
-  raiser,
-  ext = DEFAULT_EXTENSION,
-  comment,
-  opts = {}
-}) {
+function snapShotCore (options) {
+  const what = options.what
+  const file = options.file
+  const __filename = options.__filename
+  const specName = options.specName
+  const exactSpecName = options.exactSpecName
+  const store = options.store || identity
+  const compare = options.compare || utils.compare
+  const raiser = options.raiser || fs.raiseIfDifferent
+  const ext = options.ext || DEFAULT_EXTENSION
+  const comment = options.comment
+  const opts = options.opts || {}
+
   const fileParameter = file || __filename
   la(is.unemptyString(fileParameter), 'missing file', fileParameter)
   la(is.maybe.unemptyString(specName), 'invalid specName', specName)
@@ -150,9 +183,6 @@ function snapShotCore ({what,
 
   la(is.fn(compare), 'missing compare function', compare)
   la(is.fn(store), 'invalid store function', store)
-  if (!raiser) {
-    raiser = fs.raiseIfDifferent
-  }
   la(is.fn(raiser), 'invalid raiser function', raiser)
   la(is.maybe.unemptyString(comment), 'wrong comment type', comment)
 

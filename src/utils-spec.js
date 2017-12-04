@@ -2,7 +2,7 @@
 
 const la = require('lazy-ass')
 const is = require('check-more-types')
-const {strip} = require('./utils')
+const strip = require('./utils').strip
 const Result = require('folktale/result')
 const snapshot = require('snap-shot-it')
 
@@ -29,7 +29,7 @@ describe('utils', () => {
 })
 
 describe('compare', () => {
-  const {compare} = require('./utils')
+  const compare = require('./utils').compare
 
   it('returns Result', () => {
     const expected = 'foo'
@@ -71,7 +71,7 @@ describe('compare', () => {
 })
 
 describe('exportText', () => {
-  const {exportText} = require('./utils')
+  const exportText = require('./utils').errorText
 
   it('is a function', () => {
     la(is.fn(exportText))
@@ -85,7 +85,7 @@ describe('exportText', () => {
 })
 
 describe('removeExtraNewLines', () => {
-  const {removeExtraNewLines} = require('./utils')
+  const removeExtraNewLines = require('./utils').removeExtraNewLines
 
   it('is a function', () => {
     la(is.fn(removeExtraNewLines))

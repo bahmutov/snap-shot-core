@@ -95,7 +95,12 @@ const isValidCompareResult = is.schema({
 // expected = schema we expect value to adhere to
 // value - what the test computed right now
 // expected - existing value loaded from snapshot
-function raiseIfDifferent ({value, expected, specName, compare}) {
+function raiseIfDifferent (options) {
+  const value = options.value
+  const expected = options.expected
+  const specName = options.specName
+  const compare = options.compare
+
   la(value, 'missing value to compare', value)
   la(expected, 'missing expected value', expected)
   la(is.unemptyString(specName), 'missing spec name', specName)

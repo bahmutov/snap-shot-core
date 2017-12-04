@@ -8,7 +8,7 @@ const mkdirp = require('mkdirp')
 /* eslint-env mocha */
 describe('file system', () => {
   describe('saveSnapshots', () => {
-    const {saveSnapshots} = fileSystem
+    const saveSnapshots = fileSystem.saveSnapshots
 
     it('is a function', () => {
       la(is.fn(saveSnapshots))
@@ -44,7 +44,7 @@ describe('file system', () => {
   })
 
   describe('fileForSpec', () => {
-    const {fileForSpec} = fileSystem
+    const fileForSpec = fileSystem.fileForSpec
 
     it('adds different extension', () => {
       const result = fileForSpec('foo.coffee', '.js')

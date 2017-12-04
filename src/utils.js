@@ -8,7 +8,11 @@ const stripIndent = require('common-tags').stripIndent
 
 // TODO: we should also consider the file spec name + test name
 // not just spec name (which is test name here)
-function snapshotIndex ({counters, file, specName}) {
+function snapshotIndex (options) {
+  const counters = options.counters
+  const file = options.file
+  const specName = options.specName
+
   la(is.object(counters), 'expected counters', counters)
   la(is.unemptyString(specName), 'expected specName', specName)
   la(is.unemptyString(file), 'missing filename', file)
@@ -30,7 +34,10 @@ function strip (o) {
   return JSON.parse(JSON.stringify(o))
 }
 
-function compare ({expected, value}) {
+function compare (options) {
+  const expected = options.expected
+  const value = options.value
+
   const e = JSON.stringify(expected)
   const v = JSON.stringify(value)
   if (e === v) {
@@ -41,8 +48,11 @@ function compare ({expected, value}) {
 
 const sameTypes = (a, b) => typeof expected === typeof value
 
-const compareTypes = ({expected, value}) =>
-  sameTypes(expected, value) ? Result.Ok() : Result.Error('no message')
+const compareTypes = (options) => {
+  const expected = options.expected
+  const value = options.value
+  return sameTypes(expected, value) ? Result.Ok() : Result.Error('no message')
+}
 
 function exportText (name, value) {
   la(is.unemptyString(name), 'expected snapshot name, got:', name)

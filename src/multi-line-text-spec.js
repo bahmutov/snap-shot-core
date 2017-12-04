@@ -3,7 +3,10 @@ const stripIndent = require('common-tags').stripIndent
 const disparity = require('disparity')
 const Result = require('folktale/result')
 
-function compareText ({expected, value}) {
+function compareText (options) {
+  const expected = options.expected
+  const value = options.value
+
   const textDiff = disparity.unified(expected, value)
   return textDiff ? Result.Error(textDiff) : Result.Ok()
 }
