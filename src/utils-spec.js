@@ -71,7 +71,7 @@ describe('compare', () => {
 })
 
 describe('exportText', () => {
-  const exportText = require('./utils').errorText
+  const exportText = require('./utils').exportText
 
   it('is a function', () => {
     la(is.fn(exportText))
