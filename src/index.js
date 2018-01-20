@@ -134,7 +134,7 @@ function storeValue (options) {
 // TODO switch to async
 function pruneSnapshots (options) {
   const tests = options.tests
-  const ext = options.tests || DEFAULT_EXTENSION
+  const ext = options.ext || DEFAULT_EXTENSION
 
   la(is.array(tests), 'missing tests', tests)
   const byFilename = R.groupBy(R.prop('file'), tests)
