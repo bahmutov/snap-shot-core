@@ -7,7 +7,9 @@
 [![Build status][ci-image] ][ci-url]
 [![semantic-release][semantic-image] ][semantic-url]
 [![js-standard-style][standard-image]][standard-url]
-[![next-update-travis badge][nut-badge]][nut-readme]
+[![renovate-app badge][renovate-badge]][renovate-app]
+
+<!-- [![next-update-travis badge][nut-badge]][nut-readme] -->
 
 This is the snapshot loading and saving utility, used by
 [snap-shot][snap-shot] and [schema-shot][schema-shot] projects.
@@ -151,14 +153,14 @@ to determine if running on CI or not.
 ## Pruning snapshots
 
 When test names change or tests are updated, new snapshots are saved, but old ones remain
-in the snapshot file. To prune the old snapshots, the test runner can pass all current spec 
+in the snapshot file. To prune the old snapshots, the test runner can pass all current spec
 names to prune all other ones. Just call `.prune()` method and pass the following options
 
 ```
 * tests: list of current tests. Each object should have
   file: the full test filename
   specName: the full title of the test
-* ext: optional snapshot filename extension 
+* ext: optional snapshot filename extension
 ```
 
 For example see [src/prune-spec.js](src/prune-spec.js)
@@ -290,3 +292,5 @@ OTHER DEALINGS IN THE SOFTWARE.
 [standard-url]: http://standardjs.com/
 [nut-badge]: https://img.shields.io/badge/next--update--travis-weekly-green.svg
 [nut-readme]: https://github.com/bahmutov/next-update-travis#readme
+[renovate-badge]: https://img.shields.io/badge/renovate-app-blue.svg
+[renovate-app]: https://renovateapp.com/
