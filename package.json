@@ -90,7 +90,7 @@
     "license-checker": "13.1.0",
     "mocha": "3.5.3",
     "next-update-travis": "1.7.1",
-    "nsp": "2.8.1",
+    "nsp": "3.2.1",
     "pre-git": "3.17.1",
     "semantic-release": "7.0.2",
     "simple-commit-message": "3.3.2",
