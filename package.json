@@ -96,7 +96,7 @@
     "simple-commit-message": "3.3.2",
     "sinon": "3.3.0",
     "snap-shot-it": "1.4.0",
-    "standard": "10.0.3"
+    "standard": "11.0.1"
   },
   "dependencies": {
     "check-more-types": "2.24.0",
