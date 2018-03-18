@@ -15,7 +15,9 @@ const exportObject = require('./utils').exportObject
 
 const cwd = process.cwd()
 const fromCurrentFolder = path.relative.bind(null, cwd)
-const snapshotsFolder = fromCurrentFolder('__snapshots__')
+const snapshotsFolder = process.env.SNAPSHOT_DIR
+  ? path.resolve(cwd, process.env.SNAPSHOT_DIR)
+  : path.resolve(cwd, '__snapshots__')
 
 function loadSnaps (snapshotPath) {
   const full = require.resolve(snapshotPath)

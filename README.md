@@ -207,6 +207,10 @@ line 2
 
 The newlines will be trimmed automatically when loading the snapshot value.
 
+## Other snapshot directory
+
+Run the code with `SNAPSHOT_DIR=test/_snapshots` to configure the directory of the snapshots.
+
 ## Debugging
 
 Run the code with `DEBUG=snap-shot-core` option to see more log messages.
