@@ -1,4 +1,5 @@
 const fileSystem = require('./file-system')
+const utils = require('./utils')
 const fs = require('fs')
 const la = require('lazy-ass')
 const is = require('check-more-types')
@@ -54,6 +55,23 @@ describe('file system', () => {
     it('does not add .js twice', () => {
       const result = fileForSpec('foo.js', '.js')
       la(result.endsWith('foo.js'), result)
+    })
+  })
+
+  describe('error message', () => {
+    it('includes snapshot name', () => {
+      const specName = 'foo-bar 1'
+
+      la(is.raises(() => {
+        fileSystem.raiseIfDifferent({
+          value: 42,
+          expected: 41,
+          specName,
+          compare: utils.compare
+        })
+      }, (err) => {
+        return err.message.includes(specName)
+      }))
     })
   })
 })

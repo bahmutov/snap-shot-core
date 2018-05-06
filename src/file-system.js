@@ -96,6 +96,8 @@ const isValidCompareResult = is.schema({
 // value - what the test computed right now
 // expected - existing value loaded from snapshot
 function raiseIfDifferent (options) {
+  options = options || {}
+
   const value = options.value
   const expected = options.expected
   const specName = options.specName
@@ -112,8 +114,13 @@ function raiseIfDifferent (options) {
   result.orElse(message => {
     debug('Test "%s" snapshot difference', specName)
     la(is.unemptyString(message), 'missing err string', message)
-    console.log(message)
-    throw new Error(message)
+
+    const fullMessage = `Different value of snapshot "${specName}"\n${message}`
+
+    // QUESTION should we print the error message by default?
+    console.error(fullMessage)
+
+    throw new Error(fullMessage)
   })
 }
 
