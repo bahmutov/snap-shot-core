@@ -44,8 +44,9 @@ function loadSnaps (snapshotPath) {
 function fileForSpec (specFile, ext) {
   la(is.maybe.string(ext), 'invalid extension to find', ext)
 
-  const specName = path.basename(specFile)
+  const specName = fromCurrentFolder(specFile)
   let filename = path.join(snapshotsFolder, specName)
+  mkdirp.sync(path.dirname(filename))
   if (ext) {
     if (!filename.endsWith(ext)) {
       filename += ext

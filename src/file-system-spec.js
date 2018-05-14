@@ -56,6 +56,11 @@ describe('file system', () => {
       const result = fileForSpec('foo.js', '.js')
       la(result.endsWith('foo.js'), result)
     })
+
+    it('includes relative dirs', () => {
+      const result = fileForSpec('foo/bar/foo.js', '.js')
+      la(result.match(/foo\/bar\//), result)
+    })
   })
 
   describe('error message', () => {

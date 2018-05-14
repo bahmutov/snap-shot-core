@@ -71,7 +71,7 @@ describe('snap-shot-core', () => {
     la(out !== what, 'returns new reference')
     la(out.foo === what.foo, 'different values', out)
     const filename = path.join(process.cwd(),
-      '__snapshots__/snap-shot-core-spec.js.test')
+      '__snapshots__/src/snap-shot-core-spec.js.test')
     la(fs.existsSync(filename), 'cannot find saved file', filename)
   })
 
@@ -171,7 +171,7 @@ describe('snap-shot-core', () => {
     }
     const specName = this.test.title
     const filename = path.join(process.cwd(),
-      '__snapshots__/snap-shot-core-spec.js.test')
+      '__snapshots__/src/snap-shot-core-spec.js.test')
 
     // first snapshot
     snapShotCore({
@@ -194,7 +194,7 @@ describe('snap-shot-core', () => {
     })
 
     let snapshot = require(filename)
-    la(snapshot[specName + ' 1'] === 'A', 'first snapshot should be saved "', specName, ' 1"')
+    la(snapshot[specName + ' 1'] === '\nA\n', 'first snapshot should be saved "', specName, ' 1"')
     la(!snapshot[specName + ' 2'], 'second snapshot should not be saved "', specName, ' 2"')
     la(called, 'second snapshot should fail instead')
   })
@@ -206,7 +206,7 @@ describe('snap-shot-core', () => {
     }
     const specName = this.test.title
     const filename = path.join(process.cwd(),
-      '__snapshots__/snap-shot-core-spec.js.test')
+      '__snapshots__/src/snap-shot-core-spec.js.test')
 
     // first snapshot
     snapShotCore({
@@ -230,7 +230,7 @@ describe('snap-shot-core', () => {
     })
 
     let snapshot = require(filename)
-    la(snapshot[specName + ' 1'] === 'A', 'first snapshot should be saved "', specName, ' 1"')
+    la(snapshot[specName + ' 1'] === '\nA\n', 'first snapshot should be saved "', specName, ' 1"')
     la(!snapshot[specName + ' 2'], 'second snapshot should not be saved "', specName, ' 2"')
     la(called, 'second snapshot should fail instead')
   })

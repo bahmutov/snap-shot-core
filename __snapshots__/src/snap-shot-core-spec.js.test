@@ -8,11 +8,16 @@ exports['my test 1'] = {
 
 exports['can store derived value 1'] = 80
 
-exports['typeof example 1'] = `function`
+exports['typeof example 1'] = `
+function
+`
 
 exports['customer raiser function 1'] = 42
 
-exports['counters can be restored to zero 1'] = `A`
+exports['counters can be restored to zero 1'] = `
+A
+`
 
-exports['single counter can be restored to zero 1'] = `A`
-
+exports['single counter can be restored to zero 1'] = `
+A
+`
