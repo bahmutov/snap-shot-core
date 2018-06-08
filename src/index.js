@@ -34,8 +34,7 @@ if (isNode) {
 // keeps track how many "snapshot" calls were there per test
 var snapshotsPerTest = {}
 
-const formKey = (specName, oneIndex) =>
-  `${specName} ${oneIndex}`
+const formKey = (specName, oneIndex) => `${specName} ${oneIndex}`
 
 function restore (options) {
   if (!options) {
@@ -105,11 +104,21 @@ function storeValue (options) {
   la(value !== undefined, 'cannot store undefined value')
   la(is.unemptyString(file), 'missing filename', file)
 
-  la(is.unemptyString(specName) || is.unemptyString(exactSpecName),
-    'missing spec or exact spec name', specName, exactSpecName)
+  la(
+    is.unemptyString(specName) || is.unemptyString(exactSpecName),
+    'missing spec or exact spec name',
+    specName,
+    exactSpecName
+  )
 
   if (!exactSpecName) {
-    la(is.maybe.positive(index), 'missing snapshot index', file, specName, index)
+    la(
+      is.maybe.positive(index),
+      'missing snapshot index',
+      file,
+      specName,
+      index
+    )
   }
   la(is.maybe.unemptyString(comment), 'invalid comment to store', comment)
 
@@ -129,9 +138,33 @@ function storeValue (options) {
     fs.saveSnapshots(file, snapshots, ext)
     debug('saved updated snapshot %d for spec "%s"', index, specName)
 
-    debugSave('Saved for "%s %d" snapshot\n%s',
-      specName, index, JSON.stringify(value, null, 2))
+    debugSave(
+      'Saved for "%s %d" snapshot\n%s',
+      specName,
+      index,
+      JSON.stringify(value, null, 2)
+    )
   }
+}
+
+const pruneSnapshotsInFile = ({ byFilename, ext }) => file => {
+  const runtimeSnapshots = byFilename[file]
+  const specNames = R.map(R.prop('specName', runtimeSnapshots))
+  const snapshots = fs.loadSnapshots(file, ext)
+  if (is.empty(snapshots)) {
+    debug('empty snapshot file for', file)
+    return
+  }
+  const isPresent = (val, key) => {
+    return R.find(specName => key.startsWith(specName))(specNames)
+  }
+  const prunedSnapshots = R.pickBy(isPresent, snapshots)
+  if (R.equals(prunedSnapshots, snapshots)) {
+    debug('nothing to prune for file', file)
+    return
+  }
+  debug('saving pruned snapshot file for', file)
+  fs.saveSnapshots(file, prunedSnapshots, ext)
 }
 
 // TODO switch to async id:3
@@ -145,24 +178,8 @@ function pruneSnapshots (options) {
   la(is.array(tests), 'missing tests', tests)
   const byFilename = R.groupBy(R.prop('file'), tests)
   debug('pruning snapshots')
-  Object.keys(byFilename).forEach(file => {
-    const specNames = byFilename[file].map(s => s.specName)
-    const snapshots = fs.loadSnapshots(file, ext)
-    if (is.empty(snapshots)) {
-      debug('empty snapshot file for', file)
-      return
-    }
-    const isPresent = (val, key) => {
-      return R.find(specName => key.startsWith(specName))(specNames)
-    }
-    const prunedSnapshots = R.pickBy(isPresent, snapshots)
-    if (R.equals(prunedSnapshots, snapshots)) {
-      debug('nothing to prune for file', file)
-      return
-    }
-    debug('saving pruned snapshot file for', file)
-    fs.saveSnapshots(file, prunedSnapshots, ext)
-  })
+
+  Object.keys(byFilename).forEach(pruneSnapshotsInFile({ byFilename, ext }))
 }
 
 const isPromise = x => is.object(x) && is.fn(x.then)
@@ -183,9 +200,12 @@ function snapShotCore (options) {
   const fileParameter = file || __filename
   la(is.unemptyString(fileParameter), 'missing file', fileParameter)
   la(is.maybe.unemptyString(specName), 'invalid specName', specName)
-  la(is.maybe.unemptyString(exactSpecName), 'invalid exactSpecName', exactSpecName)
-  la(specName || exactSpecName,
-    'missing either specName or exactSpecName')
+  la(
+    is.maybe.unemptyString(exactSpecName),
+    'invalid exactSpecName',
+    exactSpecName
+  )
+  la(specName || exactSpecName, 'missing either specName or exactSpecName')
 
   la(is.fn(compare), 'missing compare function', compare)
   la(is.fn(store), 'invalid store function', store)
@@ -203,17 +223,25 @@ function snapShotCore (options) {
   debug(`file "${fileParameter} spec "${specName}`)
 
   const setOrCheckValue = any => {
-    const index = exactSpecName ? 0 : snapshotIndex({
-      counters: snapshotsPerTest,
-      file: fileParameter,
-      specName,
-      exactSpecName
-    })
+    const index = exactSpecName
+      ? 0
+      : snapshotIndex({
+        counters: snapshotsPerTest,
+        file: fileParameter,
+        specName,
+        exactSpecName
+      })
     if (index) {
-      la(is.positive(index), 'invalid snapshot index', index,
-        'for\n', specName, '\ncounters', snapshotsPerTest)
-      debug('spec "%s" snapshot is #%d',
-        specName, index)
+      la(
+        is.positive(index),
+        'invalid snapshot index',
+        index,
+        'for\n',
+        specName,
+        '\ncounters',
+        snapshotsPerTest
+      )
+      debug('spec "%s" snapshot is #%d', specName, index)
     }
 
     const value = strip(any)
@@ -230,12 +258,20 @@ function snapShotCore (options) {
         console.log('current directory', process.cwd())
         console.log('new value to save: %j', value)
         const key = formKey(specName, index)
-        throw new Error('Cannot store new snapshot value\n' +
-          'in ' + fileParameter + '\n' +
-          'for spec called "' + specName + '"\n' +
-          'test key "' + key + '"\n' +
-          'when running on CI (opts.ci = 1)\n' +
-          'see https://github.com/bahmutov/snap-shot-core/issues/5')
+        throw new Error(
+          'Cannot store new snapshot value\n' +
+            'in ' +
+            fileParameter +
+            '\n' +
+            'for spec called "' +
+            specName +
+            '"\n' +
+            'test key "' +
+            key +
+            '"\n' +
+            'when running on CI (opts.ci = 1)\n' +
+            'see https://github.com/bahmutov/snap-shot-core/issues/5'
+        )
       }
 
       const storedValue = store(value)
