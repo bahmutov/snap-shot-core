@@ -6,7 +6,10 @@ const Result = require('folktale/result')
 const jsesc = require('jsesc')
 const stripIndent = require('common-tags').stripIndent
 
-// TODO: we should also consider the file spec name + test name
+// TODO: we should also consider the file spec name + test name id:5
+// Gleb Bahmutov
+// gleb.bahmutov@gmail.com
+// https://github.com/bahmutov/snap-shot-core/issues/90
 // not just spec name (which is test name here)
 function snapshotIndex (options) {
   const counters = options.counters

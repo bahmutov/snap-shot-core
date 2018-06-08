@@ -86,7 +86,10 @@ function dummyReadFileSync () {
   `)
 }
 
-// TODO replace exposed API with error methods that wait
+// TODO replace exposed API with error methods that wait id:2
+// Gleb Bahmutov
+// gleb.bahmutov@gmail.com
+// https://github.com/bahmutov/snap-shot-core/issues/87
 // until "init" is called
 const api = {
   loadSnapshots,

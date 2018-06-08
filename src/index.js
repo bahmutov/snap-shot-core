@@ -18,7 +18,10 @@ const DEFAULT_EXTENSION = '.snapshot.js'
 
 const identity = x => x
 
-// TODO do we still need this? Is this working?
+// TODO do we still need this? Is this working? id:4
+// Gleb Bahmutov
+// gleb.bahmutov@gmail.com
+// https://github.com/bahmutov/snap-shot-core/issues/89
 let fs
 if (isNode) {
   fs = require('./file-system')
@@ -131,7 +134,10 @@ function storeValue (options) {
   }
 }
 
-// TODO switch to async
+// TODO switch to async id:3
+// Gleb Bahmutov
+// gleb.bahmutov@gmail.com
+// https://github.com/bahmutov/snap-shot-core/issues/88
 function pruneSnapshots (options) {
   const tests = options.tests
   const ext = options.ext || DEFAULT_EXTENSION
