@@ -171,10 +171,7 @@ const pruneSnapshotsInFile = ({ byFilename, ext }) => file => {
 // Gleb Bahmutov
 // gleb.bahmutov@gmail.com
 // https://github.com/bahmutov/snap-shot-core/issues/88
-function pruneSnapshots (options) {
-  const tests = options.tests
-  const ext = options.ext || DEFAULT_EXTENSION
-
+function pruneSnapshots ({tests, ext = DEFAULT_EXTENSION}) {
   la(is.array(tests), 'missing tests', tests)
   const byFilename = R.groupBy(R.prop('file'), tests)
   debug('pruning snapshots')
