@@ -209,7 +209,7 @@ The newlines will be trimmed automatically when loading the snapshot value.
 
 ## Debugging
 
-Run the code with `DEBUG=snap-shot-core` option to see more log messages.
+Run the code with `DEBUG=snap-shot-core` option to see more log messages. During testing you can see additional output by adding `DEBUG=test` environment variable (or both `DEBUG=snap-shot-core,test`).
 
 ## Testing in watch mode
 

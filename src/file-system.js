@@ -74,6 +74,8 @@ function saveSnapshots (specFile, snapshots, ext) {
   const filename = fileForSpec(specFile, ext)
   const specRelativeName = fromCurrentFolder(specFile)
   debug('saving snapshots into %s for %s', filename, specRelativeName)
+  debug('snapshots are')
+  debug(snapshots)
 
   const fragments = Object.keys(snapshots).map(testName => {
     debug(`snapshot name "${testName}"`)
@@ -107,9 +109,16 @@ function raiseIfDifferent (options) {
   la(expected, 'missing expected value', expected)
   la(is.unemptyString(specName), 'missing spec name', specName)
 
-  const result = compare({expected, value})
-  la(isValidCompareResult(result), 'invalid compare result', result,
-    'when comparing value\n', value, 'with expected\n', expected)
+  const result = compare({ expected, value })
+  la(
+    isValidCompareResult(result),
+    'invalid compare result',
+    result,
+    'when comparing value\n',
+    value,
+    'with expected\n',
+    expected
+  )
 
   result.orElse(message => {
     debug('Test "%s" snapshot difference', specName)
