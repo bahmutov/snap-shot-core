@@ -14,6 +14,10 @@ const isNode = Boolean(require('fs').existsSync)
 const isBrowser = !isNode
 const isCypress = isBrowser && typeof cy === 'object'
 
+if (isNode) {
+  debug('snap-shot-core v%s', require('../package.json').version)
+}
+
 const DEFAULT_EXTENSION = '.snapshot.js'
 
 const identity = x => x
@@ -171,17 +175,19 @@ const pruneSnapshotsInFile = ({ byFilename, ext }) => file => {
 // Gleb Bahmutov
 // gleb.bahmutov@gmail.com
 // https://github.com/bahmutov/snap-shot-core/issues/88
-function pruneSnapshots ({tests, ext = DEFAULT_EXTENSION}) {
+function pruneSnapshots ({ tests, ext = DEFAULT_EXTENSION }) {
   la(is.array(tests), 'missing tests', tests)
   const byFilename = R.groupBy(R.prop('file'), tests)
   debug('pruning snapshots')
+  debug('run time tests')
+  debug(tests)
 
   Object.keys(byFilename).forEach(pruneSnapshotsInFile({ byFilename, ext }))
 }
 
 const isPromise = x => is.object(x) && is.fn(x.then)
 
-function snapShotCore (options) {
+function core (options) {
   const what = options.what
   const file = options.file
   const __filename = options.__filename
@@ -306,10 +312,14 @@ function snapShotCore (options) {
 if (isBrowser) {
   // there might be async step to load test source code in the browser
   la(is.fn(fs.init), 'browser file system is missing init', fs)
-  snapShotCore.init = fs.init
+  core.init = fs.init
 }
 
-snapShotCore.restore = restore
-snapShotCore.prune = pruneSnapshots
+// snapShotCore.restore = restore
+// snapShotCore.prune = pruneSnapshots
 
-module.exports = snapShotCore
+module.exports = {
+  core,
+  restore,
+  prune: pruneSnapshots
+}

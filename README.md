@@ -22,7 +22,7 @@ npm install --save-dev snap-shot-core
 ```js
 const snapShot = require('snap-shot-core')
 const what // my object
-const out = snapShot({
+const out = snapShot.core({
   what,
   file: __filename,    // aliases: file, __filename
   specName: 'my test', // or whatever name you want to give,
@@ -137,7 +137,7 @@ const opts = {
   update: Boolean(process.env.UPDATE),
   ci: Boolean(process.env.CI)
 }
-snapShot({
+snapShot.core({
   what,
   file: __filename,
   specName: 'my test',
@@ -177,7 +177,7 @@ Sometimes you do not want to auto increment the snapshots, or use default test n
 In this case you can pass `exactSpecName` to just save the snapshot with that key.
 
 ```js
-snapShotCore({
+snapShot.core({
   what: 42,
   exactSpecName: 'computed value',
   file: __filename
@@ -226,7 +226,7 @@ test.onFinish(snapShot.restore)
 
 test('one test', function (t) {
     t.plan(1)
-    snapShot({
+    snapShot.core({
         what: 1,
         file: __filename,
         specName: 'one test'

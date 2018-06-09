@@ -20,12 +20,16 @@ const snapShotExtension = '.test'
 describe('snap-shot-core', () => {
   const snapShotCore = require('.')
 
-  it('it is a function', () => {
-    la(is.fn(snapShotCore))
+  it('exports a top level object', () => {
+    la(is.object(snapShotCore))
+  })
+
+  it('is a function', () => {
+    la(is.fn(snapShotCore.core))
   })
 
   it('can save without increment the exact snapshot name', () => {
-    snapShotCore({
+    snapShotCore.core({
       what: 43,
       file,
       exactSpecName: 'this should not be incremented',
@@ -36,7 +40,7 @@ describe('snap-shot-core', () => {
   })
 
   it('handles single quote in the name', () => {
-    snapShotCore({
+    snapShotCore.core({
       what: 42,
       file,
       specName: "has single quote -> ' <-",
@@ -47,7 +51,7 @@ describe('snap-shot-core', () => {
   })
 
   it('stores comment', () => {
-    snapShotCore({
+    snapShotCore.core({
       what: 42,
       file,
       specName: 'stores comment',
@@ -60,7 +64,7 @@ describe('snap-shot-core', () => {
     const what = {
       foo: 'bar'
     }
-    const out = snapShotCore({
+    const out = snapShotCore.core({
       what,
       file,
       specName: 'my test',
@@ -70,8 +74,10 @@ describe('snap-shot-core', () => {
     })
     la(out !== what, 'returns new reference')
     la(out.foo === what.foo, 'different values', out)
-    const filename = path.join(process.cwd(),
-      '__snapshots__/snap-shot-core-spec.js.test')
+    const filename = path.join(
+      process.cwd(),
+      '__snapshots__/snap-shot-core-spec.js.test'
+    )
     la(fs.existsSync(filename), 'cannot find saved file', filename)
   })
 
@@ -81,7 +87,7 @@ describe('snap-shot-core', () => {
     const store = x => 2 * x
 
     const what = 40
-    const out = snapShotCore({
+    const out = snapShotCore.core({
       what,
       file,
       specName,
@@ -99,7 +105,7 @@ describe('snap-shot-core', () => {
     // let us try snapshotting a function
     // but we only care about the "type" of the value
     const what = () => 'noop'
-    const out = snapShotCore({
+    const out = snapShotCore.core({
       what,
       file,
       specName,
@@ -115,16 +121,18 @@ describe('snap-shot-core', () => {
     const what = {
       foo: 'bar'
     }
-    la(is.raises(function snapshotOnCi () {
-      snapShotCore({
-        what,
-        file,
-        specName: 'ci test',
-        compare: utils.compare,
-        ext: snapShotExtension,
-        opts: {ci: true}
+    la(
+      is.raises(function snapshotOnCi () {
+        snapShotCore.core({
+          what,
+          file,
+          specName: 'ci test',
+          compare: utils.compare,
+          ext: snapShotExtension,
+          opts: { ci: true }
+        })
       })
-    }))
+    )
   })
 
   it('can use custom raiser function', function () {
@@ -133,7 +141,7 @@ describe('snap-shot-core', () => {
       called = true
     }
 
-    snapShotCore({
+    snapShotCore.core({
       what: 42,
       file,
       specName: 'customer raiser function',
@@ -145,16 +153,16 @@ describe('snap-shot-core', () => {
   })
 
   it('has default compare function', () => {
-    snapShotCore({
-      what: {foo: 'bar'},
+    snapShotCore.core({
+      what: { foo: 'bar' },
       file,
       specName: 'default compare'
     })
   })
 
   it('allows passing __filename', () => {
-    snapShotCore({
-      what: {foo: 'bar'},
+    snapShotCore.core({
+      what: { foo: 'bar' },
       __filename,
       specName: 'default compare'
     })
@@ -170,11 +178,13 @@ describe('snap-shot-core', () => {
       called = true
     }
     const specName = this.test.title
-    const filename = path.join(process.cwd(),
-      '__snapshots__/snap-shot-core-spec.js.test')
+    const filename = path.join(
+      process.cwd(),
+      '__snapshots__/snap-shot-core-spec.js.test'
+    )
 
     // first snapshot
-    snapShotCore({
+    snapShotCore.core({
       what: 'A',
       __filename,
       specName,
@@ -185,7 +195,7 @@ describe('snap-shot-core', () => {
     snapShotCore.restore()
 
     // this would repeat first snapshot (and it should fail)
-    snapShotCore({
+    snapShotCore.core({
       what: 'B',
       __filename,
       specName,
@@ -194,8 +204,18 @@ describe('snap-shot-core', () => {
     })
 
     let snapshot = require(filename)
-    la(snapshot[specName + ' 1'] === 'A', 'first snapshot should be saved "', specName, ' 1"')
-    la(!snapshot[specName + ' 2'], 'second snapshot should not be saved "', specName, ' 2"')
+    la(
+      snapshot[specName + ' 1'] === 'A',
+      'first snapshot should be saved "',
+      specName,
+      ' 1"'
+    )
+    la(
+      !snapshot[specName + ' 2'],
+      'second snapshot should not be saved "',
+      specName,
+      ' 2"'
+    )
     la(called, 'second snapshot should fail instead')
   })
 
@@ -205,11 +225,13 @@ describe('snap-shot-core', () => {
       called = true
     }
     const specName = this.test.title
-    const filename = path.join(process.cwd(),
-      '__snapshots__/snap-shot-core-spec.js.test')
+    const filename = path.join(
+      process.cwd(),
+      '__snapshots__/snap-shot-core-spec.js.test'
+    )
 
     // first snapshot
-    snapShotCore({
+    snapShotCore.core({
       what: 'A',
       __filename,
       specName,
@@ -221,7 +243,7 @@ describe('snap-shot-core', () => {
     })
 
     // this would repeat first snapshot (and it should fail)
-    snapShotCore({
+    snapShotCore.core({
       what: 'B',
       __filename,
       specName,
@@ -230,13 +252,23 @@ describe('snap-shot-core', () => {
     })
 
     let snapshot = require(filename)
-    la(snapshot[specName + ' 1'] === 'A', 'first snapshot should be saved "', specName, ' 1"')
-    la(!snapshot[specName + ' 2'], 'second snapshot should not be saved "', specName, ' 2"')
+    la(
+      snapshot[specName + ' 1'] === 'A',
+      'first snapshot should be saved "',
+      specName,
+      ' 1"'
+    )
+    la(
+      !snapshot[specName + ' 2'],
+      'second snapshot should not be saved "',
+      specName,
+      ' 2"'
+    )
     la(called, 'second snapshot should fail instead')
   })
 
   it('escapes unicode sequences', () => {
-    snapShotCore({
+    snapShotCore.core({
       what: '\u2028 \u270C\uFE0F',
       __filename,
       specName: 'unicode'

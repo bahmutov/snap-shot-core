@@ -15,7 +15,7 @@ describe('pruning snapshots', () => {
 
   it('is a dummy test', function () {
     dummyTestName = this.test.fullTitle().trim()
-    snapshot({
+    snapshot.core({
       what: 42,
       specName: dummyTestName,
       __filename
@@ -23,10 +23,12 @@ describe('pruning snapshots', () => {
   })
 
   it('prunes', () => {
-    const tests = [{
-      file: __filename,
-      specName: dummyTestName
-    }]
-    prune({tests})
+    const tests = [
+      {
+        file: __filename,
+        specName: dummyTestName
+      }
+    ]
+    prune({ tests })
   })
 })

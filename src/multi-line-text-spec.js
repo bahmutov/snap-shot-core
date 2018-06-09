@@ -22,7 +22,7 @@ describe('multi line text', () => {
   `
 
   it('saves long text', () => {
-    snapShotCore({
+    snapShotCore.core({
       what: text,
       __filename,
       specName: 'multi line text'
@@ -30,7 +30,7 @@ describe('multi line text', () => {
   })
 
   it('another text test', () => {
-    snapShotCore({
+    snapShotCore.core({
       what: text,
       __filename,
       specName: 'multi line text 2'
@@ -38,7 +38,7 @@ describe('multi line text', () => {
   })
 
   it('uses good diff', () => {
-    snapShotCore({
+    snapShotCore.core({
       what: text,
       __filename,
       specName: 'disparity diff',
@@ -47,7 +47,7 @@ describe('multi line text', () => {
   })
 
   it('does not put text on the first line of the snapshot', () => {
-    snapShotCore({
+    snapShotCore.core({
       what: text,
       __filename,
       exactSpecName: 'no first line',

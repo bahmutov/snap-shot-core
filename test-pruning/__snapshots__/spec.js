@@ -9,7 +9,3 @@ bar
 exports['b 1'] = `
 foo
 `
-
-exports['b 2'] = `
-bar
-`

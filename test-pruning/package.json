@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "../node_modules/.bin/mocha spec.js"
+    "test": "../node_modules/.bin/mocha spec.js",
+    "test2": "NODE_PATH=../.. ../node_modules/.bin/mocha spec.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "proxyquire": "2.0.1"
+  }
 }
