@@ -16,16 +16,16 @@ const devSnapShotCore = require('..')
 const stubs = {
   'snap-shot-core': {
     ...devSnapShotCore,
-    '@global': true
+    '@runtimeGlobal': true
   }
 }
 
 console.log('stubs', stubs)
 
 const proxyquire = require('proxyquire')
-// const snapshot = proxyquire('snap-shot-it', stubs)
+const snapshot = proxyquire('snap-shot-it', stubs)
 
-const snapshot = require('snap-shot-it')
+// const snapshot = require('snap-shot-it')
 
 /* eslint-env mocha */
 it('a', () => {

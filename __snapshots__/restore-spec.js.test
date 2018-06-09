@@ -1,0 +1,7 @@
+exports['counters can be restored to zero 1'] = `
+A
+`
+
+exports['single counter can be restored to zero 1'] = `
+A
+`
