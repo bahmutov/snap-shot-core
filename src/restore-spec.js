@@ -51,8 +51,14 @@ describe('restore', () => {
     debug('loaded snapshot from %s', filename)
     debug(snapshot)
 
-    // TODO expose utility functions that form full snapshot name
-    // TODO expose utility functions that wrap values before saving
+    // TODO expose utility functions that form full snapshot name id:6
+    // Gleb Bahmutov
+    // gleb.bahmutov@gmail.com
+    // https://github.com/bahmutov/snap-shot-core/issues/93
+    // TODO expose utility functions that wrap values before saving id:7
+    // Gleb Bahmutov
+    // gleb.bahmutov@gmail.com
+    // https://github.com/bahmutov/snap-shot-core/issues/94
     const expectedSnapshotName = specName + ' 1'
     la(
       // string value surrounded by new lines
