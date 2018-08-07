@@ -16,7 +16,7 @@ const opts = {
 const file = __filename
 const snapShotExtension = '.test'
 
-/* global describe, it */
+/* eslint-env mocha */
 describe('snap-shot-core', () => {
   const snapShotCore = require('.')
 
@@ -178,5 +178,27 @@ describe('snap-shot-core', () => {
       __filename,
       specName: 'unicode'
     })
+  })
+
+  it('can have same exact snapshot name from different files', () => {
+    snapShotCore.core({
+      what: 42,
+      file: 'spec-a.js',
+      exactSpecName: 'foo'
+    })
+
+    snapShotCore.core({
+      what: 80,
+      file: 'spec-b.js',
+      exactSpecName: 'foo'
+    })
+  })
+
+  after(() => {
+    // confirm named snapshots from different spec files
+    const snapshotsA = require('../__snapshots__/spec-a.js.snapshot')
+    la(snapshotsA.foo === 42, snapshotsA)
+    const snapshotsB = require('../__snapshots__/spec-b.js.snapshot')
+    la(snapshotsB.foo === 80, snapshotsB)
   })
 })

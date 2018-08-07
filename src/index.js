@@ -38,6 +38,11 @@ if (isNode) {
 // keeps track how many "snapshot" calls were there per test
 var snapshotsPerTest = {}
 
+/**
+ * Forms unique long name for a snapshot
+ * @param {string} specName
+ * @param {number} oneIndex
+*/
 const formKey = (specName, oneIndex) => `${specName} ${oneIndex}`
 
 function restore (options) {
