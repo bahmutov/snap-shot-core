@@ -13,9 +13,11 @@
         "npm test",
         "echo Running unit tests again to check file load",
         "npm test",
-        "npm run ban"
+        "npm run ban",
+        "npm run stop-only -- --warn"
       ],
       "pre-push": [
+        "npm run stop-only",
         "npm run secure",
         "npm run license",
         "npm run ban -- --all",
@@ -67,7 +69,8 @@
     "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
     "test": "npm run unit",
     "unit": "mocha src/*-spec.js",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "stop-only": "stop-only --folder src"
   },
   "release": {
     "analyzeCommits": "simple-commit-message",
@@ -96,7 +99,8 @@
     "simple-commit-message": "3.3.2",
     "sinon": "5.1.1",
     "snap-shot-it": "5.0.1",
-    "standard": "11.0.1"
+    "standard": "11.0.1",
+    "stop-only": "2.1.0"
   },
   "dependencies": {
     "check-more-types": "2.24.0",

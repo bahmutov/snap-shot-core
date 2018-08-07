@@ -5,7 +5,7 @@ const is = require('check-more-types')
 const debug = require('debug')('test')
 
 /* eslint-env mocha */
-describe.only('pruning snapshots', () => {
+describe('pruning snapshots', () => {
   const snapshot = require('.')
   const prune = snapshot.prune
   let dummyTestName
