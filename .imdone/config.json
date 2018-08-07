@@ -18,12 +18,21 @@
       "IDEA",
       "NOTE",
       "REVIEW",
-      "MARK"
+      "MARK",
+      "HELP"
     ]
   },
   "lists": [
     {
+      "name": "HELP",
+      "hidden": false
+    },
+    {
       "name": "TODO",
+      "hidden": false
+    },
+    {
+      "name": "FIXME",
       "hidden": false
     }
   ],
@@ -39,5 +48,6 @@
     "id": "5b1adebb4f7fd004e58ef569",
     "name": "bahmutov/snap-shot-core",
     "useImdoneioForPriority": true
-  }
+  },
+  "noHelp": true
 }
