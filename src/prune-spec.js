@@ -18,7 +18,12 @@ describe('pruning snapshots', () => {
     dummyTestName = this.test.fullTitle().trim()
     debug('creating a snapshot for test "%s"', dummyTestName)
     debug('from filename "%s"', __filename)
-    // FIXME this command does NOT save snapshot file?!
+    // FIXME this command does NOT save snapshot file?! id:9
+    //   
+    // ----
+    // <https://github.com/bahmutov/snap-shot-core/issues/101>
+    // Gleb Bahmutov
+    // gleb.bahmutov@gmail.com
     snapshot.core({
       what: 42,
       specName: dummyTestName,
