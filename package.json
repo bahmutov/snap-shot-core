@@ -97,7 +97,7 @@
     "pre-git": "3.17.1",
     "semantic-release": "7.0.2",
     "simple-commit-message": "3.3.2",
-    "sinon": "5.1.1",
+    "sinon": "6.1.5",
     "snap-shot-it": "5.0.1",
     "standard": "11.0.1",
     "stop-only": "2.1.0"
