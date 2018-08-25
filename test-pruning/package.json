@@ -11,6 +11,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "proxyquire": "2.0.1"
+    "proxyquire": "2.1.0"
   }
 }
