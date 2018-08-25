@@ -5,9 +5,22 @@ const la = require('lazy-ass')
 const is = require('check-more-types')
 const utils = require('./utils')
 
+const isRunTimeSnapshot = is.schema({
+  specName: is.unemptyString,
+  file: is.unemptyString
+})
+
 const pruneSnapshotsInObject = (runtimeSnapshots, snapshots) => {
-  const specNames = R.map(R.prop('specName', runtimeSnapshots))
+  la(is.array(runtimeSnapshots), 'invalid runtime snapshots', runtimeSnapshots)
+  runtimeSnapshots.forEach((r, k) => {
+    la(isRunTimeSnapshot(r), 'invalid runtime snapshot', r, 'at index', k)
+  })
+
+  const specNames = R.map(R.prop('specName'), runtimeSnapshots)
   debug('have %s before pruning', pluralize('name', specNames.length, true))
+  if (debug.enabled) {
+    debug(specNames.sort())
+  }
 
   const isPresent = (val, key) => {
     return R.find(specName => key.startsWith(specName))(specNames)
@@ -17,6 +30,10 @@ const pruneSnapshotsInObject = (runtimeSnapshots, snapshots) => {
     'after pruning remaining %s',
     pluralize('name', R.keys(prunedSnapshots).length, true)
   )
+  if (debug.enabled) {
+    debug(R.keys(prunedSnapshots).sort())
+  }
+
   return prunedSnapshots
 }
 
@@ -54,6 +71,7 @@ const pruneSnapshots = fs => ({ tests, ext = utils.DEFAULT_EXTENSION }) => {
 
 module.exports = fs => {
   return {
-    pruneSnapshots: pruneSnapshots(fs)
+    pruneSnapshots: pruneSnapshots(fs),
+    pruneSnapshotsInObject
   }
 }
