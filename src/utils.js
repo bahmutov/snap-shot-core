@@ -51,7 +51,7 @@ function compare (options) {
 
 const sameTypes = (a, b) => typeof expected === typeof value
 
-const compareTypes = (options) => {
+const compareTypes = options => {
   const expected = options.expected
   const value = options.value
   return sameTypes(expected, value) ? Result.Ok() : Result.Error('no message')
@@ -82,7 +82,7 @@ function exportObject (name, value) {
   return `exports['${name}'] = ${serialized}\n`
 }
 
-const isSurroundedByNewLines = (s) =>
+const isSurroundedByNewLines = s =>
   is.string(s) && s.length > 1 && s[0] === '\n' && s[s.length - 1] === '\n'
 
 // when we save string snapshots we add extra new lines to
@@ -99,6 +99,8 @@ function removeExtraNewLines (snapshots) {
   return snapshots
 }
 
+const DEFAULT_EXTENSION = '.snapshot.js'
+
 module.exports = {
   snapshotIndex,
   strip,
@@ -107,5 +109,6 @@ module.exports = {
   compareTypes,
   exportText,
   exportObject,
-  removeExtraNewLines
+  removeExtraNewLines,
+  DEFAULT_EXTENSION
 }

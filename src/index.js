@@ -6,7 +6,7 @@ const la = require('lazy-ass')
 const is = require('check-more-types')
 const utils = require('./utils')
 const isCI = require('is-ci')
-const R = require('ramda')
+
 const snapshotIndex = utils.snapshotIndex
 const strip = utils.strip
 
@@ -17,8 +17,6 @@ const isCypress = isBrowser && typeof cy === 'object'
 if (isNode) {
   debug('snap-shot-core v%s', require('../package.json').version)
 }
-
-const DEFAULT_EXTENSION = '.snapshot.js'
 
 const identity = x => x
 
@@ -156,40 +154,6 @@ function storeValue (options) {
   }
 }
 
-const pruneSnapshotsInFile = ({ byFilename, ext }) => file => {
-  const runtimeSnapshots = byFilename[file]
-  const specNames = R.map(R.prop('specName', runtimeSnapshots))
-  const snapshots = fs.loadSnapshots(file, ext)
-  if (is.empty(snapshots)) {
-    debug('empty snapshot file for', file)
-    return
-  }
-  const isPresent = (val, key) => {
-    return R.find(specName => key.startsWith(specName))(specNames)
-  }
-  const prunedSnapshots = R.pickBy(isPresent, snapshots)
-  if (R.equals(prunedSnapshots, snapshots)) {
-    debug('nothing to prune for file', file)
-    return
-  }
-  debug('saving pruned snapshot file for', file)
-  fs.saveSnapshots(file, prunedSnapshots, ext)
-}
-
-// TODO switch to async id:3
-// Gleb Bahmutov
-// gleb.bahmutov@gmail.com
-// https://github.com/bahmutov/snap-shot-core/issues/88
-function pruneSnapshots ({ tests, ext = DEFAULT_EXTENSION }) {
-  la(is.array(tests), 'missing tests', tests)
-  const byFilename = R.groupBy(R.prop('file'), tests)
-  debug('pruning snapshots')
-  debug('run time tests')
-  debug(tests)
-
-  Object.keys(byFilename).forEach(pruneSnapshotsInFile({ byFilename, ext }))
-}
-
 const isPromise = x => is.object(x) && is.fn(x.then)
 
 function core (options) {
@@ -201,7 +165,7 @@ function core (options) {
   const store = options.store || identity
   const compare = options.compare || utils.compare
   const raiser = options.raiser || fs.raiseIfDifferent
-  const ext = options.ext || DEFAULT_EXTENSION
+  const ext = options.ext || utils.DEFAULT_EXTENSION
   const comment = options.comment
   const opts = options.opts || {}
 
@@ -320,11 +284,13 @@ if (isBrowser) {
   core.init = fs.init
 }
 
+const prune = require('./prune')(fs).pruneSnapshots
+
 // snapShotCore.restore = restore
 // snapShotCore.prune = pruneSnapshots
 
 module.exports = {
   core,
   restore,
-  prune: pruneSnapshots
+  prune
 }
