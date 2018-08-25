@@ -9,10 +9,8 @@
 [![js-standard-style][standard-image]][standard-url]
 [![renovate-app badge][renovate-badge]][renovate-app]
 
-<!-- [![next-update-travis badge][nut-badge]][nut-readme] -->
-
 This is the snapshot loading and saving utility, used by
-[snap-shot][snap-shot] and [schema-shot][schema-shot] projects.
+[snap-shot-it][snap-shot-it] and [schema-shot][schema-shot] projects.
 Can be used to save snapshots from any testing project.
 
 ```sh
@@ -45,12 +43,14 @@ following (paired with the right `compare` function).
 const store = x => typeof x
 // expected - previously saved "type of" value
 // value - current original value
-const compare = ({expected, value}) => // return Result
-snapShot({
-  what,
-  store,
-  compare
-})
+const compare = (
+  { expected, value } // return Result
+) =>
+  snapShot({
+    what,
+    store,
+    compare,
+  })
 ```
 
 Note: by default multi line text is saves using ES6 template string, while
@@ -64,7 +64,7 @@ instance, preferably [Folktable.Result][result]. A simple one could be
 
 ```js
 const Result = require('folktale/result')
-function compare ({expected, value}) {
+function compare({ expected, value }) {
   const e = JSON.stringify(expected)
   const v = JSON.stringify(value)
   if (e === v) {
@@ -77,13 +77,10 @@ function compare ({expected, value}) {
 Another one, that compares values by type could be even simpler
 
 ```js
-const sameTypes = (a, b) =>
-  typeof expected === typeof value
+const sameTypes = (a, b) => typeof expected === typeof value
 
-const compareTypes = ({expected, value}) =>
-  sameTypes(expected, value)
-    ? Result.Ok()
-    : Result.Error('types are different')
+const compareTypes = ({ expected, value }) =>
+  sameTypes(expected, value) ? Result.Ok() : Result.Error('types are different')
 ```
 
 Note input is an object `{expected, value}` and if there is a difference
@@ -102,10 +99,10 @@ with these parameters
 
 ```js
 raiser({
-  value,    // current value
+  value, // current value
   expected, // loaded value
   specName, // the name of the test
-  compare   // compare function
+  compare, // compare function
 })
 ```
 
@@ -113,29 +110,26 @@ Default `raiser` function just throws an Error with good message.
 
 ## Returned value
 
-The `snapShotCore` function returns the *expected* value.
+The `snapShotCore` function returns the _expected_ value.
 If this is the first time, it will be `store(what)` value.
 Otherwise it will be the loaded `expected` value.
-
-[snap-shot]: https://github.com/bahmutov/snap-shot
-[schema-shot]: https://github.com/bahmutov/schema-shot
 
 ## Options
 
 You can pass several options to control the behavior. I usually grab them
 from the environment variables.
 
-* `show` - log snapshot value when saving new one
-* `dryRun` - only show the new snapshot value, but do not save it
-* `update` - override snapshot value with the new one if there is difference
-* `ci` - the tests are running on CI, which should disallow *saving snapshots*
+- `show` - log snapshot value when saving new one
+- `dryRun` - only show the new snapshot value, but do not save it
+- `update` - override snapshot value with the new one if there is difference
+- `ci` - the tests are running on CI, which should disallow _saving snapshots_
 
 ```js
 const opts = {
   show: Boolean(process.env.SHOW),
   dryRun: Boolean(process.env.DRY),
   update: Boolean(process.env.UPDATE),
-  ci: Boolean(process.env.CI)
+  ci: Boolean(process.env.CI),
 }
 snapShot.core({
   what,
@@ -143,7 +137,7 @@ snapShot.core({
   specName: 'my test',
   compare: compareFn,
   ext: '.test',
-  opts
+  opts,
 })
 ```
 
@@ -180,10 +174,12 @@ In this case you can pass `exactSpecName` to just save the snapshot with that ke
 snapShot.core({
   what: 42,
   exactSpecName: 'computed value',
-  file: __filename
+  file: __filename,
 })
 ```
+
 The snapshot file will have
+
 ```js
 exports['computed value'] = 42
 ```
@@ -197,9 +193,11 @@ extra lone first line (looking like `exports["name"] = ...`). So when saving sna
 line 1
 line 2
 ```
+
 the snapshot file will have
+
 ```js
-exports["name"] = `
+exports['name'] = `
 line 1
 line 2
 `
@@ -219,18 +217,18 @@ tape example:
 
 ```js
 //foo.test.js
-const test = require('tape');
+const test = require('tape')
 const snapShot = require('snap-shot-core')
 
 test.onFinish(snapShot.restore)
 
-test('one test', function (t) {
-    t.plan(1)
-    snapShot.core({
-        what: 1,
-        file: __filename,
-        specName: 'one test'
-    })
+test('one test', function(t) {
+  t.plan(1)
+  snapShot.core({
+    what: 1,
+    file: __filename,
+    specName: 'one test',
+  })
 })
 ```
 
@@ -240,7 +238,7 @@ You can restore / reset a counter for a particular test
 const snapShot = require('snap-shot-core')
 snapShot.restore({
   file: __filename,
-  specName: 'this test'
+  specName: 'this test',
 })
 ```
 
@@ -248,9 +246,9 @@ snapShot.restore({
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2017
 
-* [@bahmutov](https://twitter.com/bahmutov)
-* [glebbahmutov.com](https://glebbahmutov.com)
-* [blog](https://glebbahmutov.com/blog)
+- [@bahmutov](https://twitter.com/bahmutov)
+- [glebbahmutov.com](https://glebbahmutov.com)
+- [blog](https://glebbahmutov.com/blog)
 
 License: MIT - do anything with the code, but don't blame me if it does not work.
 
@@ -290,7 +288,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 [semantic-url]: https://github.com/semantic-release/semantic-release
 [standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
 [standard-url]: http://standardjs.com/
-[nut-badge]: https://img.shields.io/badge/next--update--travis-weekly-green.svg
-[nut-readme]: https://github.com/bahmutov/next-update-travis#readme
 [renovate-badge]: https://img.shields.io/badge/renovate-app-blue.svg
 [renovate-app]: https://renovateapp.com/
+[snap-shot-it]: https://github.com/bahmutov/snap-shot-it
+[schema-shot]: https://github.com/bahmutov/schema-shot
