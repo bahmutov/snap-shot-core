@@ -8,6 +8,7 @@ const is = require('check-more-types')
 const mkdirp = require('mkdirp')
 const vm = require('vm')
 const escapeQuotes = require('escape-quotes')
+const pluralize = require('pluralize')
 
 const removeExtraNewLines = require('./utils').removeExtraNewLines
 const exportText = require('./utils').exportText
@@ -68,6 +69,19 @@ function loadSnapshots (specFile, ext) {
   return snapshots
 }
 
+function prepareFragments (snapshots) {
+  const fragments = Object.keys(snapshots).sort().map(testName => {
+    debug(`snapshot name "${testName}"`)
+    const value = snapshots[testName]
+    const escapedName = escapeQuotes(testName)
+    return is.string(value)
+      ? exportText(escapedName, value)
+      : exportObject(escapedName, value)
+  })
+
+  return fragments
+}
+
 // returns snapshot text
 function saveSnapshots (specFile, snapshots, ext) {
   mkdirp.sync(snapshotsFolder)
@@ -77,14 +91,9 @@ function saveSnapshots (specFile, snapshots, ext) {
   debug('snapshots are')
   debug(snapshots)
 
-  const fragments = Object.keys(snapshots).map(testName => {
-    debug(`snapshot name "${testName}"`)
-    const value = snapshots[testName]
-    const escapedName = escapeQuotes(testName)
-    return is.string(value)
-      ? exportText(escapedName, value)
-      : exportObject(escapedName, value)
-  })
+  const fragments = prepareFragments(snapshots)
+  debug('have %s', pluralize('fragment', fragments.length, true))
+
   const s = fragments.join('\n')
   fs.writeFileSync(filename, s, 'utf8')
   return s
@@ -140,5 +149,6 @@ module.exports = {
   saveSnapshots,
   raiseIfDifferent,
   fileForSpec,
-  exportText
+  exportText,
+  prepareFragments
 }
