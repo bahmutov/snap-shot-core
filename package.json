@@ -23,6 +23,8 @@
         "npm run secure",
         "npm run license",
         "npm run ban -- --all",
+        "echo checking if package lock has been updated by running npm ci command",
+        "npm ci",
         "npm run size"
       ],
       "post-commit": [],
