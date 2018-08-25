@@ -1,3 +1,5 @@
+[![TODO board](https://imdone.io/api/1.0/projects/5b1adebb4f7fd004e58ef569/badge)](https://imdone.io/app#/board/bahmutov/snap-shot-core)
+
 # snap-shot-core
 
 > Save / load named snapshots, useful for tests
