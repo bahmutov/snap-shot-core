@@ -180,25 +180,40 @@ describe('snap-shot-core', () => {
     })
   })
 
-  it('can have same exact snapshot name from different files', () => {
-    snapShotCore.core({
-      what: 42,
-      file: 'spec-a.js',
-      exactSpecName: 'foo'
-    })
-
-    snapShotCore.core({
-      what: 80,
-      file: 'spec-b.js',
-      exactSpecName: 'foo'
-    })
+  it('throws an error right away when trying to snapshot undefined value', () => {
+    la(
+      is.raises(
+        () => {
+          snapShotCore.core({
+            what: undefined
+          })
+        },
+        err => err.message.includes('Cannot store undefined value')
+      )
+    )
   })
 
-  after(() => {
-    // confirm named snapshots from different spec files
-    const snapshotsA = require('../__snapshots__/spec-a.js.snapshot')
-    la(snapshotsA.foo === 42, snapshotsA)
-    const snapshotsB = require('../__snapshots__/spec-b.js.snapshot')
-    la(snapshotsB.foo === 80, snapshotsB)
+  describe('multiple specs', () => {
+    it('can have same exact snapshot name from different files', () => {
+      snapShotCore.core({
+        what: 42,
+        file: 'spec-a.js',
+        exactSpecName: 'foo'
+      })
+
+      snapShotCore.core({
+        what: 80,
+        file: 'spec-b.js',
+        exactSpecName: 'foo'
+      })
+    })
+
+    after(() => {
+      // confirm named snapshots from different spec files
+      const snapshotsA = require('../__snapshots__/spec-a.js.snapshot')
+      la(snapshotsA.foo === 42, snapshotsA)
+      const snapshotsB = require('../__snapshots__/spec-b.js.snapshot')
+      la(snapshotsB.foo === 80, snapshotsB)
+    })
   })
 })

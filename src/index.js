@@ -157,7 +157,12 @@ function storeValue (options) {
 const isPromise = x => is.object(x) && is.fn(x.then)
 
 function core (options) {
-  const what = options.what
+  const what = options.what // value to store
+  la(
+    what !== undefined,
+    'Cannot store undefined value\nSee https://github.com/bahmutov/snap-shot-core/issues/111'
+  )
+
   const file = options.file
   const __filename = options.__filename
   const specName = options.specName
@@ -285,9 +290,6 @@ if (isBrowser) {
 }
 
 const prune = require('./prune')(fs).pruneSnapshots
-
-// snapShotCore.restore = restore
-// snapShotCore.prune = pruneSnapshots
 
 module.exports = {
   core,
