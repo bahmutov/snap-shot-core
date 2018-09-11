@@ -102,7 +102,7 @@
     "sinon": "6.2.0",
     "snap-shot-it": "6.1.2",
     "standard": "11.0.1",
-    "stop-only": "2.2.1"
+    "stop-only": "2.2.2"
   },
   "dependencies": {
     "check-more-types": "2.24.0",
