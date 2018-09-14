@@ -99,7 +99,7 @@
     "pre-git": "3.17.1",
     "semantic-release": "15.9.14",
     "simple-commit-message": "4.0.3",
-    "sinon": "6.3.2",
+    "sinon": "6.3.3",
     "snap-shot-it": "6.1.8",
     "standard": "11.0.1",
     "stop-only": "2.2.4"
