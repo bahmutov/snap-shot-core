@@ -97,7 +97,7 @@
     "mocha": "5.2.0",
     "nsp": "3.2.1",
     "pre-git": "3.17.1",
-    "semantic-release": "15.9.14",
+    "semantic-release": "15.9.15",
     "simple-commit-message": "4.0.3",
     "sinon": "6.3.3",
     "snap-shot-it": "6.1.8",
