@@ -69,7 +69,14 @@ function exportText (name, value) {
     throw new Error(message)
   }
   la(is.unemptyString(value), 'expected string value', value)
-  const withNewLines = '\n' + value + '\n'
+  // jsesc replace "\n" with "\\n"
+  // https://github.com/mathiasbynens/jsesc/issues/20
+  const serialized = value.split('\n').map(line => {
+    return jsesc(line, {
+      'quotes': 'backtick'
+    })
+  }).join('\n')
+  const withNewLines = '\n' + serialized + '\n'
   return `exports['${name}'] = \`${withNewLines}\`\n`
 }
 
