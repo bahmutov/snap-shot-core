@@ -79,7 +79,7 @@ function compare({ expected, value }) {
 Another one, that compares values by type could be even simpler
 
 ```js
-const sameTypes = (a, b) => typeof expected === typeof value
+const sameTypes = (a, b) => typeof a === typeof b
 
 const compareTypes = ({ expected, value }) =>
   sameTypes(expected, value) ? Result.Ok() : Result.Error('types are different')
