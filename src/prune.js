@@ -37,8 +37,8 @@ const pruneSnapshotsInObject = (runtimeSnapshots, snapshots) => {
   return prunedSnapshots
 }
 
-const pruneSnapshotsInFile = ({ fs, byFilename, ext }) => file => {
-  const snapshots = fs.loadSnapshots(file, ext)
+const pruneSnapshotsInFile = ({ fs, byFilename, ext }, opts) => file => {
+  const snapshots = fs.loadSnapshots(file, ext, opts)
   if (is.empty(snapshots)) {
     debug('empty snapshots to prune in file', file)
     return
@@ -52,21 +52,21 @@ const pruneSnapshotsInFile = ({ fs, byFilename, ext }) => file => {
   }
 
   debug('saving pruned snapshot file for', file)
-  fs.saveSnapshots(file, prunedSnapshots, ext)
+  fs.saveSnapshots(file, prunedSnapshots, ext, opts)
 }
 
 // TODO switch to async id:3
 // Gleb Bahmutov
 // gleb.bahmutov@gmail.com
 // https://github.com/bahmutov/snap-shot-core/issues/88
-const pruneSnapshots = fs => ({ tests, ext = utils.DEFAULT_EXTENSION }) => {
+const pruneSnapshots = (fs) => ({ tests, ext = utils.DEFAULT_EXTENSION }, opts) => {
   la(is.array(tests), 'missing tests', tests)
   const byFilename = R.groupBy(R.prop('file'), tests)
   debug('pruning snapshots')
   debug('run time tests')
   debug(tests)
 
-  Object.keys(byFilename).forEach(pruneSnapshotsInFile({ fs, byFilename, ext }))
+  Object.keys(byFilename).forEach(pruneSnapshotsInFile({ fs, byFilename, ext }, opts))
 }
 
 module.exports = fs => {

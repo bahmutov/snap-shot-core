@@ -73,7 +73,8 @@ describe('file system', () => {
               test: ''
             }
             saveSnapshots('./foo-spec.js', snapshots, '.js', {
-              sortSnapshots: true
+              sortSnapshots: true,
+              useRelativePath: false
             })
           },
           err => {
@@ -133,6 +134,11 @@ describe('file system', () => {
           )
         })
         .finally(chdir.back)
+    })
+
+    it('returns relative path when true in options', () => {
+      const result = fileForSpec('test/file/foo.js', '.js', { useRelativePath: true })
+      la(result.endsWith('test/file/__snapshots__/foo.js'), result)
     })
   })
 
