@@ -32,6 +32,28 @@ describe('file system', () => {
         fragments
       )
     })
+
+    it('returns fragments unsorted', () => {
+      const snapshots = {
+        x: 'value of x',
+        b: 'value of b',
+        a: 'value of a'
+      }
+      const fragments = prepareFragments(snapshots, { sortSnapshots: false })
+      // expect the original order
+      const expected = [
+        "exports['x'] = `\nvalue of x\n`\n",
+        "exports['b'] = `\nvalue of b\n`\n",
+        "exports['a'] = `\nvalue of a\n`\n"
+      ]
+      la(
+        R.equals(fragments)(expected),
+        'expected value',
+        expected,
+        'actual fragments',
+        fragments
+      )
+    })
   })
 
   describe('saveSnapshots', () => {
@@ -49,7 +71,9 @@ describe('file system', () => {
             const snapshots = {
               test: ''
             }
-            saveSnapshots('./foo-spec.js', snapshots, '.js')
+            saveSnapshots('./foo-spec.js', snapshots, '.js', {
+              sortSnapshots: true
+            })
           },
           err => {
             const text = 'Cannot store empty / null / undefined string'

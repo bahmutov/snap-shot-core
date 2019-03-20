@@ -7,6 +7,7 @@ const is = require('check-more-types')
 const utils = require('./utils')
 const isCI = require('is-ci')
 const quote = require('quote')
+const R = require('ramda')
 
 const snapshotIndex = utils.snapshotIndex
 const strip = utils.strip
@@ -143,7 +144,7 @@ function storeValue (options) {
   }
 
   if (!opts.dryRun) {
-    fs.saveSnapshots(file, snapshots, ext)
+    fs.saveSnapshots(file, snapshots, ext, R.pick(['sortSnapshots'], opts))
     debug('saved updated snapshot %d for spec "%s"', index, specName)
 
     debugSave(
@@ -182,6 +183,9 @@ function throwCannotSaveOnCI ({
 }
 
 function core (options) {
+  la(is.object(options), 'missing options argument', options)
+  options = R.clone(options) // to avoid accidental mutations
+
   const what = options.what // value to store
   la(
     what !== undefined,
@@ -217,6 +221,11 @@ function core (options) {
   if (!('ci' in opts)) {
     debug('set CI flag to %s', isCI)
     opts.ci = isCI
+  }
+
+  if (!('sortSnapshots' in opts)) {
+    debug('setting sortSnapshots flags to true')
+    opts.sortSnapshots = true
   }
 
   if (ext) {

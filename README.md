@@ -125,13 +125,16 @@ from the environment variables.
 - `dryRun` - only show the new snapshot value, but do not save it
 - `update` - override snapshot value with the new one if there is difference
 - `ci` - the tests are running on CI, which should disallow _saving snapshots_
+- `sortSnapshots` - enable sorting snapshots by name when saving (default is true)
 
 ```js
+// for example to use environment variables
 const opts = {
   show: Boolean(process.env.SHOW),
   dryRun: Boolean(process.env.DRY),
   update: Boolean(process.env.UPDATE),
   ci: Boolean(process.env.CI),
+  sortSnapshots: true
 }
 snapShot.core({
   what,

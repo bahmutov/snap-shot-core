@@ -18,6 +18,10 @@ const cwd = process.cwd()
 const fromCurrentFolder = path.relative.bind(null, cwd)
 const snapshotsFolder = fromCurrentFolder('__snapshots__')
 
+const isOptions = is.schema({
+  sortSnapshots: is.bool
+})
+
 function loadSnaps (snapshotPath) {
   const full = require.resolve(snapshotPath)
   if (!fs.existsSync(snapshotPath)) {
@@ -69,8 +73,14 @@ function loadSnapshots (specFile, ext) {
   return snapshots
 }
 
-function prepareFragments (snapshots) {
-  const fragments = Object.keys(snapshots).sort().map(testName => {
+function prepareFragments (snapshots, opts = { sortSnapshots: true }) {
+  la(isOptions(opts), 'expected prepare fragments options', opts)
+
+  const names = opts.sortSnapshots
+    ? Object.keys(snapshots).sort()
+    : Object.keys(snapshots)
+
+  const fragments = names.map(testName => {
     debug(`snapshot name "${testName}"`)
     const value = snapshots[testName]
     const escapedName = escapeQuotes(testName)
@@ -83,7 +93,14 @@ function prepareFragments (snapshots) {
 }
 
 // returns snapshot text
-function saveSnapshots (specFile, snapshots, ext) {
+function saveSnapshots (
+  specFile,
+  snapshots,
+  ext,
+  opts = { sortSnapshots: true }
+) {
+  la(isOptions(opts), 'expected save snapshots options', opts)
+
   mkdirp.sync(snapshotsFolder)
   const filename = fileForSpec(specFile, ext)
   const specRelativeName = fromCurrentFolder(specFile)
@@ -91,7 +108,7 @@ function saveSnapshots (specFile, snapshots, ext) {
   debug('snapshots are')
   debug(snapshots)
 
-  const fragments = prepareFragments(snapshots)
+  const fragments = prepareFragments(snapshots, opts)
   debug('have %s', pluralize('fragment', fragments.length, true))
 
   const s = fragments.join('\n')

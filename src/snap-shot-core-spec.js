@@ -5,6 +5,7 @@ const is = require('check-more-types')
 const fs = require('fs')
 const path = require('path')
 const utils = require('./utils')
+const { stripIndent } = require('common-tags')
 
 const opts = {
   show: Boolean(process.env.SHOW),
@@ -214,6 +215,113 @@ describe('snap-shot-core', () => {
       la(snapshotsA.foo === 42, snapshotsA)
       const snapshotsB = require('../__snapshots__/spec-b.js.snapshot')
       la(snapshotsB.foo === 80, snapshotsB)
+    })
+  })
+
+  describe('unsorted snapshot names', () => {
+    context('sorted', () => {
+      const file = 'sorted-names-spec.js'
+      it('sorts snapshot names by default', () => {
+        // the snapshots arrive NOT in alphabetical order
+        snapShotCore.core({
+          what: 42,
+          file,
+          exactSpecName: 'x'
+        })
+
+        snapShotCore.core({
+          what: 80,
+          file,
+          exactSpecName: 'b'
+        })
+
+        snapShotCore.core({
+          what: 60,
+          file,
+          exactSpecName: 'a'
+        })
+      })
+
+      after(() => {
+        // confirm order of saved snapshots
+        const specFilename = path.join(
+          __dirname,
+          '..',
+          '__snapshots__',
+          `${file}.snapshot.js`
+        )
+        const snapshots = fs.readFileSync(specFilename, 'utf8').trim()
+        const expected = stripIndent`
+        exports['a'] = 60
+
+        exports['b'] = 80
+
+        exports['x'] = 42
+      `
+        la(
+          snapshots === expected,
+          'expected sorted snapshot names like\n' +
+            expected +
+            '\n\ngot:\n' +
+            snapshots
+        )
+      })
+    })
+
+    context('unsorted', () => {
+      const file = 'unsorted-names-spec.js'
+
+      it('leaves the names unsorted', () => {
+        // the snapshots arrive NOT in alphabetical order
+        const opts = {
+          sortSnapshots: false
+        }
+        snapShotCore.core({
+          what: 42,
+          file,
+          exactSpecName: 'x',
+          opts
+        })
+
+        snapShotCore.core({
+          what: 80,
+          file,
+          exactSpecName: 'b',
+          opts
+        })
+
+        snapShotCore.core({
+          what: 60,
+          file,
+          exactSpecName: 'a',
+          opts
+        })
+      })
+
+      after(() => {
+        // confirm order of saved snapshots
+        const specFilename = path.join(
+          __dirname,
+          '..',
+          '__snapshots__',
+          `${file}.snapshot.js`
+        )
+        const snapshots = fs.readFileSync(specFilename, 'utf8').trim()
+        const expected = stripIndent`
+        exports['x'] = 42
+
+        exports['b'] = 80
+
+        exports['a'] = 60
+      `
+        la(
+          snapshots === expected,
+          'expected sorted snapshot names like\n' +
+            expected +
+            '\n\ngot:\n' +
+            snapshots
+        )
+      })
     })
   })
 })
