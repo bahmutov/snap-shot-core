@@ -13,6 +13,7 @@ describe('throwCannotSaveOnCI', () => {
   })
 
   it('throws good message for auto formed', () => {
+    let caught
     try {
       throwCannotSaveOnCI({
         value: 'foo',
@@ -22,6 +23,7 @@ describe('throwCannotSaveOnCI', () => {
         index: 1
       })
     } catch (e) {
+      caught = true
       const expected = stripIndent`
         Cannot store new snapshot value
         in "spec.js"
@@ -35,9 +37,11 @@ describe('throwCannotSaveOnCI', () => {
         'expected:\n' + expected + '\n\nactual:\n' + e.message
       )
     }
+    la(caught, 'did not catch error!')
   })
 
   it('throws good message for exact snapshot name', () => {
+    let caught
     try {
       throwCannotSaveOnCI({
         value: 'foo',
@@ -47,6 +51,7 @@ describe('throwCannotSaveOnCI', () => {
         index: null
       })
     } catch (e) {
+      caught = true
       const expected = stripIndent`
         Cannot store new snapshot value
         in "spec.js"
@@ -60,5 +65,6 @@ describe('throwCannotSaveOnCI', () => {
         'expected:\n' + expected + '\n\nactual:\n' + e.message
       )
     }
+    la(caught, 'did not catch error!')
   })
 })
