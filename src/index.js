@@ -266,22 +266,6 @@ function core (options) {
           specName,
           index
         })
-
-        // const key = exactSpecName || formKey(specName, index)
-        // throw new Error(
-        //   'Cannot store new snapshot value\n' +
-        //     'in ' +
-        //     quote(fileParameter) +
-        //     '\n' +
-        //     'for snapshot called ' +
-        //     quote(exactSpecName || specName) +
-        //     '\n' +
-        //     'test key ' +
-        //     quote(key) +
-        //     '\n' +
-        //     'when running on CI (opts.ci = 1)\n' +
-        //     'see https://github.com/bahmutov/snap-shot-core/issues/5'
-        // )
       }
 
       const storedValue = store(value)
