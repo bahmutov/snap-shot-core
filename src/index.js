@@ -6,6 +6,7 @@ const la = require('lazy-ass')
 const is = require('check-more-types')
 const utils = require('./utils')
 const isCI = require('is-ci')
+const quote = require('quote')
 
 const snapshotIndex = utils.snapshotIndex
 const strip = utils.strip
@@ -40,7 +41,7 @@ var snapshotsPerTest = {}
  * Forms unique long name for a snapshot
  * @param {string} specName
  * @param {number} oneIndex
-*/
+ */
 const formKey = (specName, oneIndex) => `${specName} ${oneIndex}`
 
 function restore (options) {
@@ -156,6 +157,30 @@ function storeValue (options) {
 
 const isPromise = x => is.object(x) && is.fn(x.then)
 
+function throwCannotSaveOnCI ({
+  value,
+  fileParameter,
+  exactSpecName,
+  specName,
+  index
+}) {
+  const key = exactSpecName || formKey(specName, index)
+  throw new Error(
+    'Cannot store new snapshot value\n' +
+      'in ' +
+      quote(fileParameter) +
+      '\n' +
+      'for snapshot called ' +
+      quote(exactSpecName || specName) +
+      '\n' +
+      'test key ' +
+      quote(key) +
+      '\n' +
+      'when running on CI (opts.ci = 1)\n' +
+      'see https://github.com/bahmutov/snap-shot-core/issues/5'
+  )
+}
+
 function core (options) {
   const what = options.what // value to store
   la(
@@ -234,21 +259,29 @@ function core (options) {
       if (opts.ci) {
         console.log('current directory', process.cwd())
         console.log('new value to save: %j', value)
-        const key = formKey(specName, index)
-        throw new Error(
-          'Cannot store new snapshot value\n' +
-            'in ' +
-            fileParameter +
-            '\n' +
-            'for spec called "' +
-            specName +
-            '"\n' +
-            'test key "' +
-            key +
-            '"\n' +
-            'when running on CI (opts.ci = 1)\n' +
-            'see https://github.com/bahmutov/snap-shot-core/issues/5'
-        )
+        return throwCannotSaveOnCI({
+          value,
+          fileParameter,
+          exactSpecName,
+          specName,
+          index
+        })
+
+        // const key = exactSpecName || formKey(specName, index)
+        // throw new Error(
+        //   'Cannot store new snapshot value\n' +
+        //     'in ' +
+        //     quote(fileParameter) +
+        //     '\n' +
+        //     'for snapshot called ' +
+        //     quote(exactSpecName || specName) +
+        //     '\n' +
+        //     'test key ' +
+        //     quote(key) +
+        //     '\n' +
+        //     'when running on CI (opts.ci = 1)\n' +
+        //     'see https://github.com/bahmutov/snap-shot-core/issues/5'
+        // )
       }
 
       const storedValue = store(value)
@@ -294,5 +327,6 @@ const prune = require('./prune')(fs).pruneSnapshots
 module.exports = {
   core,
   restore,
-  prune
+  prune,
+  throwCannotSaveOnCI
 }

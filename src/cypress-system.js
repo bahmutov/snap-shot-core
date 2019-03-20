@@ -72,7 +72,7 @@ function init () {
   // }
 }
 
-function raiseIfDifferent ({value, expected}) {
+function raiseIfDifferent ({ value, expected }) {
   cy.then(() => {
     expect(value).to.equal(expected)
   })

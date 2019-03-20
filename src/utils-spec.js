@@ -34,28 +34,28 @@ describe('compare', () => {
   it('returns Result', () => {
     const expected = 'foo'
     const value = 'foo'
-    const r = compare({expected, value})
+    const r = compare({ expected, value })
     la(Result.hasInstance(r))
   })
 
   it('passes identical values', () => {
     const expected = 'foo'
     const value = 'foo'
-    const r = compare({expected, value})
+    const r = compare({ expected, value })
     la(r.value === undefined)
   })
 
   it('has error text', () => {
     const expected = 'foo'
     const value = 'bar'
-    const r = compare({expected, value})
+    const r = compare({ expected, value })
     la(r.value === '"foo" !== "bar"')
   })
 
   it('has error (snapshot)', () => {
     const expected = 'foo'
     const value = 'bar'
-    snapshot(compare({expected, value}))
+    snapshot(compare({ expected, value }))
   })
 
   const raise = () => {
@@ -64,7 +64,7 @@ describe('compare', () => {
   it('snapshots error value', () => {
     const expected = 'foo'
     const value = 'bar'
-    compare({expected, value})
+    compare({ expected, value })
       .map(raise)
       .orElse(snapshot)
   })
