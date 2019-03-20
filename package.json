@@ -20,7 +20,6 @@
       ],
       "pre-push": [
         "npm run stop-only",
-        "npm run secure",
         "npm run license",
         "npm run ban -- --all",
         "echo checking if package lock has been updated by running npm ci command",
@@ -35,7 +34,6 @@
         "deps-ok": "npm run deps",
         "dependency-check": "npm run deps",
         "license-checker": "npm run license",
-        "nsp": "npm run secure",
         "git-issues": "npm run issues"
       }
     }
@@ -69,7 +67,6 @@
     "license": "license-checker --production --onlyunknown --csv",
     "lint": "standard --verbose --fix src/*.js",
     "pretest": "npm run lint",
-    "secure": "nsp check",
     "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
     "test": "npm run unit",
     "unit": "mocha src/*-spec.js",
@@ -95,7 +92,6 @@
     "git-issues": "1.3.1",
     "license-checker": "25.0.1",
     "mocha": "5.2.0",
-    "nsp": "3.2.1",
     "pre-git": "3.17.1",
     "semantic-release": "15.13.3",
     "simple-commit-message": "4.0.3",
