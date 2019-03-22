@@ -59,10 +59,9 @@ function fileForSpec (specFile, ext) {
   return path.resolve(filename)
 }
 
-function loadSnapshots (specFile, ext) {
-  la(is.unemptyString(specFile), 'missing specFile name', specFile)
+function loadSnapshotsFrom (filename) {
+  la(is.unemptyString(filename), 'missing snapshots filename', filename)
 
-  const filename = fileForSpec(specFile, ext)
   debug('loading snapshots from %s', filename)
   let snapshots = {}
   if (fs.existsSync(filename)) {
@@ -71,6 +70,13 @@ function loadSnapshots (specFile, ext) {
     debug('could not find snapshots file %s', filename)
   }
   return snapshots
+}
+
+function loadSnapshots (specFile, ext) {
+  la(is.unemptyString(specFile), 'missing specFile name', specFile)
+
+  const filename = fileForSpec(specFile, ext)
+  return loadSnapshotsFrom(filename)
 }
 
 function prepareFragments (snapshots, opts = { sortSnapshots: true }) {
@@ -163,6 +169,7 @@ module.exports = {
   readFileSync: fs.readFileSync,
   fromCurrentFolder,
   loadSnapshots,
+  loadSnapshotsFrom,
   saveSnapshots,
   raiseIfDifferent,
   fileForSpec,
