@@ -59,10 +59,9 @@ function fileForSpec (specFile, ext) {
   return path.resolve(filename)
 }
 
-function loadSnapshots (specFile, ext) {
-  la(is.unemptyString(specFile), 'missing specFile name', specFile)
+function loadSnapshotsFrom (filename) {
+  la(is.unemptyString(filename), 'missing snapshots filename', filename)
 
-  const filename = fileForSpec(specFile, ext)
   debug('loading snapshots from %s', filename)
   let snapshots = {}
   if (fs.existsSync(filename)) {
@@ -71,6 +70,13 @@ function loadSnapshots (specFile, ext) {
     debug('could not find snapshots file %s', filename)
   }
   return snapshots
+}
+
+function loadSnapshots (specFile, ext) {
+  la(is.unemptyString(specFile), 'missing specFile name', specFile)
+
+  const filename = fileForSpec(specFile, ext)
+  return loadSnapshotsFrom(filename)
 }
 
 function prepareFragments (snapshots, opts = { sortSnapshots: true }) {
@@ -92,6 +98,15 @@ function prepareFragments (snapshots, opts = { sortSnapshots: true }) {
   return fragments
 }
 
+function maybeSortAndSave (snapshots, filename, opts = { sortSnapshots: true }) {
+  const fragments = prepareFragments(snapshots, opts)
+  debug('have %s', pluralize('fragment', fragments.length, true))
+
+  const s = fragments.join('\n')
+  fs.writeFileSync(filename, s, 'utf8')
+  return s
+}
+
 // returns snapshot text
 function saveSnapshots (
   specFile,
@@ -108,12 +123,7 @@ function saveSnapshots (
   debug('snapshots are')
   debug(snapshots)
 
-  const fragments = prepareFragments(snapshots, opts)
-  debug('have %s', pluralize('fragment', fragments.length, true))
-
-  const s = fragments.join('\n')
-  fs.writeFileSync(filename, s, 'utf8')
-  return s
+  return maybeSortAndSave(snapshots, filename, opts)
 }
 
 const isValidCompareResult = is.schema({
@@ -163,7 +173,9 @@ module.exports = {
   readFileSync: fs.readFileSync,
   fromCurrentFolder,
   loadSnapshots,
+  loadSnapshotsFrom,
   saveSnapshots,
+  maybeSortAndSave,
   raiseIfDifferent,
   fileForSpec,
   exportText,

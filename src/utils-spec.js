@@ -102,6 +102,12 @@ describe('exportText', () => {
     const expected = "exports['name'] = `\nfoo\n`\n"
     la(formatted === expected, 'expected\n' + expected + '\ngot\n' + formatted)
   })
+
+  it('escapes unicode emoji', () => {
+    const formatted = exportText('reaction', '😁')
+    const expected = "exports['reaction'] = `\n\\uD83D\\uDE01\n`\n"
+    la(formatted === expected, 'expected\n' + expected + '\ngot\n' + formatted)
+  })
 })
 
 describe('removeExtraNewLines', () => {
