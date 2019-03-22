@@ -98,6 +98,15 @@ function prepareFragments (snapshots, opts = { sortSnapshots: true }) {
   return fragments
 }
 
+function maybeSortAndSave (snapshots, filename, opts = { sortSnapshots: true }) {
+  const fragments = prepareFragments(snapshots, opts)
+  debug('have %s', pluralize('fragment', fragments.length, true))
+
+  const s = fragments.join('\n')
+  fs.writeFileSync(filename, s, 'utf8')
+  return s
+}
+
 // returns snapshot text
 function saveSnapshots (
   specFile,
@@ -114,12 +123,7 @@ function saveSnapshots (
   debug('snapshots are')
   debug(snapshots)
 
-  const fragments = prepareFragments(snapshots, opts)
-  debug('have %s', pluralize('fragment', fragments.length, true))
-
-  const s = fragments.join('\n')
-  fs.writeFileSync(filename, s, 'utf8')
-  return s
+  return maybeSortAndSave(snapshots, filename, opts)
 }
 
 const isValidCompareResult = is.schema({
@@ -171,6 +175,7 @@ module.exports = {
   loadSnapshots,
   loadSnapshotsFrom,
   saveSnapshots,
+  maybeSortAndSave,
   raiseIfDifferent,
   fileForSpec,
   exportText,
