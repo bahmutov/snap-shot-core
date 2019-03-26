@@ -45,7 +45,7 @@
     "resave-snapshots": "./bin/resave-snapshots.js"
   },
   "files": [
-    "bin",
+    "bin/*.js",
     "!bin/*-spec.js",
     "src/*.js",
     "!src/*-spec.js"
@@ -74,7 +74,7 @@
     "pretest": "npm run lint",
     "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
     "test": "npm run unit",
-    "unit": "mocha src/*-spec.js",
+    "unit": "mocha 'src/*-spec.js' 'bin/*-spec.js'",
     "semantic-release": "semantic-release",
     "stop-only": "stop-only --folder src"
   },
