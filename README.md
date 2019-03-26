@@ -247,6 +247,16 @@ snapShot.restore({
 })
 ```
 
+## Resaving snaphots
+
+You can re-save snapshot file (for example to escape it again, or to resort the snapshots by name) using [bin/resave-snapshots.js](bin/resave-snapshots.js) script. After installing this module, run `bin` script
+
+```bash
+$(npm bin)/resave-snapshots [--sort] snapshot-filename
+```
+
+To just re-escape the snapshots omit the `--sort` flag.
+
 ### Small print
 
 Author: Gleb Bahmutov &lt;gleb.bahmutov@gmail.com&gt; &copy; 2017
