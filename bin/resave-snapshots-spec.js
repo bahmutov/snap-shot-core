@@ -6,7 +6,8 @@ const { stripIndent } = require('common-tags')
 const mkdirp = require('mkdirp')
 const la = require('lazy-ass')
 
-// include an emoji that should be escaped
+// include an emoji that should NOT be escaped
+// https://github.com/bahmutov/snap-shot-core/issues/235
 const snapshot = stripIndent`
   exports['x'] = 42
 
@@ -19,7 +20,7 @@ const escapedSnapshot = stripIndent`
   exports['x'] = 42
 
   exports['b'] = \`
-  \\uD83D\\uDC4D
+  👍
   \`
 
   exports['a'] = 60
@@ -29,7 +30,7 @@ const escapedSortedSnapshot = stripIndent`
   exports['a'] = 60
 
   exports['b'] = \`
-  \\uD83D\\uDC4D
+  👍
   \`
 
   exports['x'] = 42
