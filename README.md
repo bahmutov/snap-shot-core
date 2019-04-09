@@ -247,6 +247,10 @@ snapShot.restore({
 })
 ```
 
+## Escaping values
+
+Because the snapshots are saved as template literals, back ticks and other "niceties" have to be escaped. This module uses [jsesc](https://github.com/mathiasbynens/jsesc) module to do string escaping.
+
 ## Resaving snaphots
 
 You can re-save snapshot file (for example to escape it again, or to resort the snapshots by name) using [bin/resave-snapshots.js](bin/resave-snapshots.js) script. After installing this module, run `bin` script

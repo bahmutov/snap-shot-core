@@ -57,6 +57,11 @@ const compareTypes = options => {
   return sameTypes(expected, value) ? Result.Ok() : Result.Error('no message')
 }
 
+/**
+ * Serializes and escapes a string value before saving.
+ * @param {string} name for the snapshot
+ * @param {string} value text to be escaped for saving
+ */
 function exportText (name, value) {
   la(is.unemptyString(name), 'expected snapshot name, got:', name)
   if (!is.unemptyString(value)) {
@@ -76,7 +81,8 @@ function exportText (name, value) {
     .split('\n')
     .map(line => {
       return jsesc(line, {
-        quotes: 'backtick'
+        quotes: 'backtick',
+        minimal: true
       })
     })
     .join('\n')
@@ -84,6 +90,9 @@ function exportText (name, value) {
   return `exports['${name}'] = \`${withNewLines}\`\n`
 }
 
+/**
+ * Escapes properties of an object to be safe for saving
+ */
 function exportObject (name, value) {
   const serialized = jsesc(value, {
     json: true,

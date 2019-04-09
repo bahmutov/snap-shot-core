@@ -5,6 +5,7 @@ const is = require('check-more-types')
 const strip = require('./utils').strip
 const Result = require('folktale/result')
 const snapshot = require('snap-shot-it')
+const { stripIndent } = require('common-tags')
 
 /* global describe, it */
 describe('utils', () => {
@@ -103,10 +104,29 @@ describe('exportText', () => {
     la(formatted === expected, 'expected\n' + expected + '\ngot\n' + formatted)
   })
 
-  it('escapes unicode emoji', () => {
+  it('does not escape unicode emoji', () => {
     const formatted = exportText('reaction', '😁')
-    const expected = "exports['reaction'] = `\n\\uD83D\\uDE01\n`\n"
+    const expected = "exports['reaction'] = `\n😁\n`\n"
     la(formatted === expected, 'expected\n' + expected + '\ngot\n' + formatted)
+  })
+
+  it('does not escape ascii art', () => {
+    const text = stripIndent`
+      =============================
+        (Run Finished)
+
+        Spec                                          Tests  Passing  Failing  Pending  Skipped
+        ┌─────────────────────────────────────────────────────────────────────────────────────┐
+        │ ✔ simple_passing_spec.coffee     XX:XX        1        1        -        -        - │
+        └─────────────────────────────────────────────────────────────────────────────────────┘
+        All specs passed!                  XX:XX        1        1        -        -        -
+    `
+    const formatted = exportText('ascii art', text)
+    const expected = "exports['ascii art'] = `\n" + text + '\n`\n'
+    la(
+      formatted === expected,
+      'expected\n' + expected + '\ngot\n' + formatted + '\nend'
+    )
   })
 })
 
