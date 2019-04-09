@@ -249,7 +249,7 @@ snapShot.restore({
 
 ## Escaping values
 
-Because the snapshots are saved as template literals, back ticks and other "niceties" have to be escaped. This module uses [jsesc](https://github.com/mathiasbynens/jsesc) module to do string escaping.
+Because the snapshots are saved as template literals, back ticks and other "niceties" have to be escaped. This module uses [jsesc](https://github.com/mathiasbynens/jsesc) module to do string escaping. Currently only the [minimal set of characters is escaped](https://github.com/mathiasbynens/jsesc#minimal).
 
 ## Resaving snaphots
 

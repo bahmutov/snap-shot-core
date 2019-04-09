@@ -71,6 +71,44 @@ describe('compare', () => {
   })
 })
 
+describe('exportObject', () => {
+  const exportObject = require('./utils').exportObject
+
+  it('is a function', () => {
+    la(is.fn(exportObject))
+  })
+
+  it('does not escape emoji values', () => {
+    const formatted = exportObject('name', {
+      foo: '😁'
+    })
+    const expected = stripIndent`
+      exports['name'] = {
+        "foo": "😁"
+      }
+    `
+    la(
+      formatted === expected + '\n',
+      'expected\n' + expected + '\ngot\n' + formatted + '\nend'
+    )
+  })
+
+  it('does not escape emoji keys', () => {
+    const formatted = exportObject('name', {
+      '🍕': '😁'
+    })
+    const expected = stripIndent`
+      exports['name'] = {
+        "🍕": "😁"
+      }
+    `
+    la(
+      formatted === expected + '\n',
+      'expected\n' + expected + '\ngot\n' + formatted + '\nend'
+    )
+  })
+})
+
 describe('exportText', () => {
   const exportText = require('./utils').exportText
 

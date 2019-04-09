@@ -97,7 +97,8 @@ function exportObject (name, value) {
   const serialized = jsesc(value, {
     json: true,
     compact: false,
-    indent: '  '
+    indent: '  ',
+    minimal: true
   })
   return `exports['${name}'] = ${serialized}\n`
 }
