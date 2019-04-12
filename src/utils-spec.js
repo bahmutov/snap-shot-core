@@ -6,6 +6,14 @@ const strip = require('./utils').strip
 const Result = require('folktale/result')
 const snapshot = require('snap-shot-it')
 const { stripIndent } = require('common-tags')
+const jsesc = require('jsesc')
+
+const compareText = (expected, formatted) => {
+  la(
+    formatted === expected,
+    'expected\n' + expected + '\ngot\n' + formatted + '\nend'
+  )
+}
 
 /* global describe, it */
 describe('utils', () => {
@@ -106,6 +114,41 @@ describe('exportObject', () => {
       formatted === expected + '\n',
       'expected\n' + expected + '\ngot\n' + formatted + '\nend'
     )
+  })
+})
+
+describe('jsesc', () => {
+  const options = {
+    quotes: 'backtick',
+    minimal: true
+  }
+
+  it('normal text', () => {
+    const text = 'foo'
+    const escaped = jsesc(text, options)
+    const expected = 'foo'
+    compareText(expected, escaped)
+  })
+
+  it('escapes backticks', () => {
+    const text = 'foo `bar` baz'
+    const escaped = jsesc(text, options)
+    const expected = 'foo \\`bar\\` baz'
+    compareText(expected, escaped)
+  })
+
+  it('escapes backticks around number', () => {
+    const text = 'foo `100` baz'
+    const escaped = jsesc(text, options)
+    const expected = 'foo \\`100\\` baz'
+    compareText(expected, escaped)
+  })
+
+  it('escapes backticks around emoji', () => {
+    const text = 'foo `⭐️` baz'
+    const escaped = jsesc(text, options)
+    const expected = 'foo \\`⭐️\\` baz'
+    compareText(expected, escaped)
   })
 })
 
