@@ -55,3 +55,21 @@ describe('multi line text', () => {
     })
   })
 })
+
+describe('multi line text with backticks', () => {
+  const text = stripIndent`
+    line 1
+    line 2 with \`42\`
+    line 3 with \`foo\`
+
+    line 5 without line 4
+  `
+
+  it('saves text just fine', () => {
+    snapShotCore.core({
+      what: text,
+      __filename,
+      specName: 'text with backticks'
+    })
+  })
+})
