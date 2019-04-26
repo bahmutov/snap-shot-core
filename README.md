@@ -214,6 +214,8 @@ The newlines will be trimmed automatically when loading the snapshot value.
 
 Run the code with `DEBUG=snap-shot-core` option to see more log messages. During testing you can see additional output by adding `DEBUG=test` environment variable (or both `DEBUG=snap-shot-core,test`).
 
+If you want verbose output, use `DEBUG=snap-shot-core*`
+
 ## Testing in watch mode
 
 In case you execute your tests in watch mode and you notice the snapshots are always new-created for the same set of tests, then you need to restore the counters per file.

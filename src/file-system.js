@@ -3,6 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const debug = require('debug')('snap-shot-core')
+const verbose = require('debug')('snap-shot-core:verbose')
 const la = require('lazy-ass')
 const is = require('check-more-types')
 const mkdirp = require('mkdirp')
@@ -52,13 +53,19 @@ function fileForSpec (specFile, ext) {
   la(is.maybe.string(ext), 'invalid extension to find', ext)
 
   const specName = path.basename(specFile)
+  verbose('spec file %s has name %s', specName)
+
   let filename = path.join(snapshotsFolder, specName)
   if (ext) {
     if (!filename.endsWith(ext)) {
       filename += ext
     }
   }
-  return path.resolve(filename)
+  verbose('formed filename %s', filename)
+  const fullName = path.resolve(filename)
+  verbose('full resolved name %s', fullName)
+
+  return fullName
 }
 
 function loadSnapshotsFrom (filename) {
@@ -78,6 +85,7 @@ function loadSnapshots (specFile, ext) {
   la(is.unemptyString(specFile), 'missing specFile name', specFile)
 
   const filename = fileForSpec(specFile, ext)
+  verbose('from spec %s got snap filename %s', specFile, filename)
   return loadSnapshotsFrom(filename)
 }
 
