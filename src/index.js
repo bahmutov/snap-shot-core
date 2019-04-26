@@ -81,7 +81,7 @@ function findStoredValue (options) {
     return
   }
 
-  debug('loading snapshots from %s %s for spec %s', file, ext, relativePath)
+  debug('loading snapshots from %s ext %s for spec %s', file, ext, relativePath)
   const snapshots = fs.loadSnapshots(file, ext)
   if (!snapshots) {
     return

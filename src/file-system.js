@@ -17,6 +17,8 @@ const exportObject = require('./utils').exportObject
 const cwd = process.cwd()
 const fromCurrentFolder = path.relative.bind(null, cwd)
 const snapshotsFolder = fromCurrentFolder('__snapshots__')
+debug('process cwd: %s', cwd)
+debug('snapshots folder: %s', snapshotsFolder)
 
 const isOptions = is.schema({
   sortSnapshots: is.bool
