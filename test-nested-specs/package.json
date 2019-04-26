@@ -1,0 +1,12 @@
+{
+  "name": "test-nested-specs",
+  "version": "1.0.0",
+  "description": "shows how snapshots are saved for nested projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "../node_modules/.bin/mocha spec.js subfolder/spec2.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

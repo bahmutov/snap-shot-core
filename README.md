@@ -33,6 +33,10 @@ const out = snapShot.core({
 })
 ```
 
+## Save folders
+
+All snapshots are saved in a single folder `__snapshots__`, even if original spec files are nested. See [test-nested-specs](test-nested-specs) example folder.
+
 ## Store function
 
 Sometimes you want to store not the value itself, but something derived,

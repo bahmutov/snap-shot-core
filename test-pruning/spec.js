@@ -1,3 +1,6 @@
+// load "snap-shot-it" BUT replace its dependency "snap-shot-core"
+// with current implementation from "../src"
+
 // console.log(process.env)
 const join = require('path').join
 // console.log(module)
