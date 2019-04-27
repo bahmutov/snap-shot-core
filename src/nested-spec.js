@@ -40,9 +40,9 @@ describe('nested specs', () => {
       snapshotsFolder
     )
     // TODO check if the snapshots folder does not have extra files id:15
-// - <https://github.com/bahmutov/snap-shot-core/issues/244>
-// Gleb Bahmutov
-// gleb.bahmutov@gmail.com
+    // - <https://github.com/bahmutov/snap-shot-core/issues/244>
+    // Gleb Bahmutov
+    // gleb.bahmutov@gmail.com
     Object.keys(snapshots).forEach(expectedFilename => {
       const filename = join(snapshotsFolder, expectedFilename)
       la(
