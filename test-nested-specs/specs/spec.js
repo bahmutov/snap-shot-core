@@ -1,4 +1,4 @@
-const snapshot = require('..').core
+const snapshot = require('../..').core
 
 /* eslint-env mocha */
 it('a', () => {
