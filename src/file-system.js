@@ -26,7 +26,10 @@ const cwd = process.cwd()
  * Returns a relative path to the original working directory.
  */
 const fromCurrentFolder = path.relative.bind(null, cwd)
-// TODO: expose the name of the snapshots folder to the outside world
+// TODO: expose the name of the snapshots folder to the outside world id:16
+// - <https://github.com/bahmutov/snap-shot-core/issues/245>
+// Gleb Bahmutov
+// gleb.bahmutov@gmail.com
 const snapshotsFolder = fromCurrentFolder('__snapshots__')
 debug('process cwd: %s', cwd)
 debug('snapshots folder: %s', snapshotsFolder)
