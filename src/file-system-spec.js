@@ -6,6 +6,7 @@ const is = require('check-more-types')
 const sinon = require('sinon')
 const mkdirp = require('mkdirp')
 const R = require('ramda')
+const chdir = require('chdir-promise')
 
 /* eslint-env mocha */
 describe('file system', () => {
@@ -115,6 +116,23 @@ describe('file system', () => {
     it('does not add .js twice', () => {
       const result = fileForSpec('foo.js', '.js')
       la(result.endsWith('foo.js'), result)
+    })
+
+    it('returns same filename even if current working directory changes', () => {
+      const fromCurrent = fileForSpec('foo.js', '.js')
+      return chdir
+        .to('..')
+        .then(() => {
+          const fromParent = fileForSpec('foo.js', '.js')
+          la(
+            fromCurrent === fromParent,
+            'from current directory',
+            fromCurrent,
+            'is different from the parent',
+            fromParent
+          )
+        })
+        .finally(chdir.back)
     })
   })
 

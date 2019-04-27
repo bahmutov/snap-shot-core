@@ -15,11 +15,30 @@ const removeExtraNewLines = require('./utils').removeExtraNewLines
 const exportText = require('./utils').exportText
 const exportObject = require('./utils').exportObject
 
+/**
+ * Saved original process current working directory (absolute path).
+ * We want to save it right away, because during testing CWD often changes,
+ * and we don't want the snapshots to randomly "jump" around and be
+ * saved in an unexpected location.
+ */
 const cwd = process.cwd()
+/**
+ * Returns a relative path to the original working directory.
+ */
 const fromCurrentFolder = path.relative.bind(null, cwd)
 const snapshotsFolder = fromCurrentFolder('__snapshots__')
 debug('process cwd: %s', cwd)
 debug('snapshots folder: %s', snapshotsFolder)
+
+/**
+ * Changes from relative path to absolute filename with respect to the
+ * _original working directory_. Always use this function instead of
+ * `path.resolve(filename)` because `path.resolve` will be affected
+ * by the _current_ working directory at the moment of resolution, and
+ * we want to form snapshot filenames wrt to the original starting
+ * working directory.
+ */
+const resolveToCwd = path.resolve.bind(null, cwd)
 
 const isOptions = is.schema({
   sortSnapshots: is.bool
@@ -62,7 +81,7 @@ function fileForSpec (specFile, ext) {
     }
   }
   verbose('formed filename %s', filename)
-  const fullName = path.resolve(filename)
+  const fullName = resolveToCwd(filename)
   verbose('full resolved name %s', fullName)
 
   return fullName
