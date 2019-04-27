@@ -14,8 +14,6 @@ script:
   - npm test
   - echo "Running unit tests again"
   - npm test
-  - echo "Testing nested specs example"
-  - cd test-nested-specs & npm test
 after_success:
   - npm run semantic-release
 branches:
