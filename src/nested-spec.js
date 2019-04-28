@@ -77,7 +77,9 @@ describe('nested specs', () => {
     shell.cp('-R', join(sourceFolder, 'specs'), tempFolder)
   })
 
-  it('saves snapshots in single folder', () => {
+  it('saves snapshots in single folder', function () {
+    this.timeout(5000)
+
     execa.shellSync('npm test', {
       cwd: tempFolder,
       stdio: 'inherit',
