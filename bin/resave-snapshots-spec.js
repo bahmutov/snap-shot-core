@@ -36,41 +36,45 @@ const escapedSortedSnapshot = stripIndent`
   exports['x'] = 42
 `
 
-const script = path.join(__dirname, 'resave-snapshots.js')
-const testFolder = path.join(__dirname, 'test-resave')
-const filename = path.join(testFolder, 'snapshot.js')
+describe('resave', () => {
+  // these tests create temp folder where a snapshot will be saved
 
-beforeEach(() => mkdirp(testFolder))
-beforeEach(() => {
-  fs.writeFileSync(filename, snapshot, 'utf8')
-})
+  const script = path.join(__dirname, 'resave-snapshots.js')
+  const testFolder = path.join(__dirname, 'test-resave')
+  const filename = path.join(testFolder, 'snapshot.js')
 
-it('re-saves snapshots without sorting', () => {
-  const args = [script, filename]
-  return execaWrap('node', args).then(() => {
-    const saved = fs.readFileSync(filename, 'utf8').trim()
-    la(
-      saved === escapedSnapshot,
-      'difference in saved unsorted snapshot\nexpected:\n' +
-        escapedSnapshot +
-        '\n---\nactual:\n' +
-        saved +
-        '\n---'
-    )
+  beforeEach(() => mkdirp.sync(testFolder))
+  beforeEach(() => {
+    fs.writeFileSync(filename, snapshot, 'utf8')
   })
-})
 
-it('re-saves sorted snapshots', () => {
-  const args = [script, '--sort', filename]
-  return execaWrap('node', args).then(() => {
-    const saved = fs.readFileSync(filename, 'utf8').trim()
-    la(
-      saved === escapedSortedSnapshot,
-      'difference in saved sorted snapshot\nexpected:\n' +
-        escapedSortedSnapshot +
-        '\n---\nactual:\n' +
-        saved +
-        '\n---'
-    )
+  it('re-saves snapshots without sorting', () => {
+    const args = [script, filename]
+    return execaWrap('node', args).then(() => {
+      const saved = fs.readFileSync(filename, 'utf8').trim()
+      la(
+        saved === escapedSnapshot,
+        'difference in saved unsorted snapshot\nexpected:\n' +
+          escapedSnapshot +
+          '\n---\nactual:\n' +
+          saved +
+          '\n---'
+      )
+    })
+  })
+
+  it('re-saves sorted snapshots', () => {
+    const args = [script, '--sort', filename]
+    return execaWrap('node', args).then(() => {
+      const saved = fs.readFileSync(filename, 'utf8').trim()
+      la(
+        saved === escapedSortedSnapshot,
+        'difference in saved sorted snapshot\nexpected:\n' +
+          escapedSortedSnapshot +
+          '\n---\nactual:\n' +
+          saved +
+          '\n---'
+      )
+    })
   })
 })
