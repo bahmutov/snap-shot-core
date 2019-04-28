@@ -9,7 +9,11 @@ const execa = require('execa')
 describe('nested specs', () => {
   // if we are running this test on CI, we cannot save new snapshots
   // so for this particular test we need to clear CI=1 value
-  const limitedEnv = R.omit(['CI'], process.env)
+  // we remove any of the env variables used by "ci-info" module
+  const limitedEnv = R.omit(
+    ['CI', 'CONTINUOUS_INTEGRATION', 'BUILD_NUMBER', 'RUN_ID', 'TRAVIS'],
+    process.env
+  )
   const sourceFolder = join(__dirname, '..', 'test-nested-specs')
   const tempFolder = join(__dirname, '..', 'temp-test-nested-specs')
 

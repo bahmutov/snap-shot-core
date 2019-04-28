@@ -76,7 +76,7 @@ function fileForSpec (specFile, ext) {
   la(is.maybe.string(ext), 'invalid extension to find', ext)
 
   const specName = path.basename(specFile)
-  verbose('spec file %s has name %s', specName)
+  verbose('spec file "%s" has name "%s"', specFile, specName)
 
   let filename = path.join(snapshotsFolder, specName)
   if (ext) {
