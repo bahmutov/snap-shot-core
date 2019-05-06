@@ -44,9 +44,18 @@ debug('snapshots folder: %s', snapshotsFolder)
  */
 const resolveToCwd = path.resolve.bind(null, cwd)
 
-const isOptions = is.schema({
+const isSaveOptions = is.schema({
   sortSnapshots: is.bool
 })
+
+const isLoadOptions = is.schema({
+  useRelativePath: is.bool
+})
+
+function getSnapshotsFolder (specFile, opts = { useRelativePath: false }) {
+  if (!opts.useRelativePath) return snapshotsFolder
+  return path.join(resolveToCwd(path.dirname(specFile)), '__snapshots__')
+}
 
 function loadSnaps (snapshotPath) {
   const full = require.resolve(snapshotPath)
@@ -72,13 +81,14 @@ function loadSnaps (snapshotPath) {
   }
 }
 
-function fileForSpec (specFile, ext) {
+function fileForSpec (specFile, ext, opts = { useRelativePath: false }) {
   la(is.maybe.string(ext), 'invalid extension to find', ext)
+  la(isLoadOptions(opts), 'expected fileForSpec options', opts)
 
   const specName = path.basename(specFile)
   verbose('spec file "%s" has name "%s"', specFile, specName)
 
-  let filename = path.join(snapshotsFolder, specName)
+  let filename = path.join(getSnapshotsFolder(specFile, opts), specName)
   if (ext) {
     if (!filename.endsWith(ext)) {
       filename += ext
@@ -104,16 +114,17 @@ function loadSnapshotsFrom (filename) {
   return snapshots
 }
 
-function loadSnapshots (specFile, ext) {
+function loadSnapshots (specFile, ext, opts = { useRelativePath: false }) {
   la(is.unemptyString(specFile), 'missing specFile name', specFile)
+  la(isLoadOptions(opts), 'expected loadSnapshots options', opts)
 
-  const filename = fileForSpec(specFile, ext)
+  const filename = fileForSpec(specFile, ext, opts)
   verbose('from spec %s got snap filename %s', specFile, filename)
   return loadSnapshotsFrom(filename)
 }
 
 function prepareFragments (snapshots, opts = { sortSnapshots: true }) {
-  la(isOptions(opts), 'expected prepare fragments options', opts)
+  la(isSaveOptions(opts), 'expected prepare fragments options', opts)
 
   const names = opts.sortSnapshots
     ? Object.keys(snapshots).sort()
@@ -145,11 +156,11 @@ function saveSnapshots (
   specFile,
   snapshots,
   ext,
-  opts = { sortSnapshots: true }
+  opts = { sortSnapshots: true, useRelativePath: false }
 ) {
-  la(isOptions(opts), 'expected save snapshots options', opts)
+  la(isSaveOptions(opts) && isLoadOptions(opts), 'expected save snapshots options', opts)
 
-  mkdirp.sync(snapshotsFolder)
+  mkdirp.sync(getSnapshotsFolder(specFile, opts))
   const filename = fileForSpec(specFile, ext)
   const specRelativeName = fromCurrentFolder(specFile)
   debug('saving snapshots into %s for %s', filename, specRelativeName)
