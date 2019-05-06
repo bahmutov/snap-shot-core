@@ -158,9 +158,17 @@ function saveSnapshots (
   ext,
   opts = { sortSnapshots: true, useRelativePath: false }
 ) {
-  la(isSaveOptions(opts) && isLoadOptions(opts), 'expected save snapshots options', opts)
+  la(
+    isSaveOptions(opts) && isLoadOptions(opts),
+    'expected save snapshots options',
+    opts
+  )
 
-  mkdirp.sync(getSnapshotsFolder(specFile, opts))
+  const snapshotsFolder = getSnapshotsFolder(specFile, opts)
+  debug('for spec file %s', specFile)
+  debug('making folder "%s" for snapshot if does not exist', snapshotsFolder)
+
+  mkdirp.sync(snapshotsFolder)
   const filename = fileForSpec(specFile, ext)
   const specRelativeName = fromCurrentFolder(specFile)
   debug('saving snapshots into %s for %s', filename, specRelativeName)

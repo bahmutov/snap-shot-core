@@ -82,7 +82,10 @@ function findStoredValue (options) {
   }
 
   debug('loading snapshots from %s ext %s for spec %s', file, ext, relativePath)
-  const snapshots = fs.loadSnapshots(file, ext, R.pick(['useRelativePath'], opts))
+  const loadOptions = R.pick(['useRelativePath'], opts)
+  debug('load options %o', loadOptions)
+
+  const snapshots = fs.loadSnapshots(file, ext, loadOptions)
   if (!snapshots) {
     return
   }
@@ -133,7 +136,11 @@ function storeValue (options) {
 
   // how to serialize comments?
   // as comments above each key?
-  const snapshots = fs.loadSnapshots(file, ext, R.pick(['useRelativePath'], opts))
+  const snapshots = fs.loadSnapshots(
+    file,
+    ext,
+    R.pick(['useRelativePath'], opts)
+  )
   const key = exactSpecName || formKey(specName, index)
   snapshots[key] = value
 
@@ -144,7 +151,12 @@ function storeValue (options) {
   }
 
   if (!opts.dryRun) {
-    fs.saveSnapshots(file, snapshots, ext, R.pick(['sortSnapshots', 'useRelativePath'], opts))
+    fs.saveSnapshots(
+      file,
+      snapshots,
+      ext,
+      R.pick(['sortSnapshots', 'useRelativePath'], opts)
+    )
     debug('saved updated snapshot %d for spec "%s"', index, specName)
 
     debugSave(
