@@ -81,9 +81,18 @@ function findStoredValue (options) {
     return
   }
 
-  debug('loading snapshots from %s ext %s for spec %s', file, ext, relativePath)
-  const snapshots = fs.loadSnapshots(file, ext, R.pick(['useRelativePath'], opts))
+  debug(
+    'loading snapshots for file %s ext %s from path %s (relative to CWD)',
+    file,
+    ext,
+    relativePath
+  )
+  const loadOptions = R.pick(['useRelativePath'], opts)
+  debug('load options %o', loadOptions)
+
+  const snapshots = fs.loadSnapshots(file, ext, loadOptions)
   if (!snapshots) {
+    debug('could not find any snapshots')
     return
   }
 
@@ -133,7 +142,11 @@ function storeValue (options) {
 
   // how to serialize comments?
   // as comments above each key?
-  const snapshots = fs.loadSnapshots(file, ext, R.pick(['useRelativePath'], opts))
+  const snapshots = fs.loadSnapshots(
+    file,
+    ext,
+    R.pick(['useRelativePath'], opts)
+  )
   const key = exactSpecName || formKey(specName, index)
   snapshots[key] = value
 
@@ -144,7 +157,12 @@ function storeValue (options) {
   }
 
   if (!opts.dryRun) {
-    fs.saveSnapshots(file, snapshots, ext, R.pick(['sortSnapshots', 'useRelativePath'], opts))
+    fs.saveSnapshots(
+      file,
+      snapshots,
+      ext,
+      R.pick(['sortSnapshots', 'useRelativePath'], opts)
+    )
     debug('saved updated snapshot %d for spec "%s"', index, specName)
 
     debugSave(
@@ -225,7 +243,7 @@ function core (options) {
 
   if (!('sortSnapshots' in opts)) {
     debug('setting sortSnapshots flags to true')
-    opts.sortSnapshots = true
+    opts.sortSnapshots = false
   }
 
   if (!('useRelativePath' in opts)) {
