@@ -81,12 +81,18 @@ function findStoredValue (options) {
     return
   }
 
-  debug('loading snapshots from %s ext %s for spec %s', file, ext, relativePath)
+  debug(
+    'loading snapshots for file %s ext %s from path %s (relative to CWD)',
+    file,
+    ext,
+    relativePath
+  )
   const loadOptions = R.pick(['useRelativePath'], opts)
   debug('load options %o', loadOptions)
 
   const snapshots = fs.loadSnapshots(file, ext, loadOptions)
   if (!snapshots) {
+    debug('could not find any snapshots')
     return
   }
 

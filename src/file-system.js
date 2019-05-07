@@ -26,11 +26,21 @@ const cwd = process.cwd()
  * Returns a relative path to the original working directory.
  */
 const fromCurrentFolder = path.relative.bind(null, cwd)
+const snapshotsFolderName = '__snapshots__'
+/**
+ * Given relative path, returns same relative path, but inside
+ * the snapshots folder.
+ * @example
+ *  joinSnapshotsFolder('foo/bar')
+ *  // CWD/__snapshots__/foo/bar
+ */
+const joinSnapshotsFolder = path.join.bind(null, cwd, snapshotsFolderName)
+
 // TODO: expose the name of the snapshots folder to the outside world id:16
 // - <https://github.com/bahmutov/snap-shot-core/issues/245>
 // Gleb Bahmutov
 // gleb.bahmutov@gmail.com
-const snapshotsFolder = fromCurrentFolder('__snapshots__')
+const snapshotsFolder = fromCurrentFolder(snapshotsFolderName)
 debug('process cwd: %s', cwd)
 debug('snapshots folder: %s', snapshotsFolder)
 
@@ -53,8 +63,19 @@ const isLoadOptions = is.schema({
 })
 
 function getSnapshotsFolder (specFile, opts = { useRelativePath: false }) {
-  if (!opts.useRelativePath) return snapshotsFolder
-  return path.join(resolveToCwd(path.dirname(specFile)), '__snapshots__')
+  if (!opts.useRelativePath) {
+    // all snapshots go into the same folder
+    return snapshotsFolder
+  }
+
+  const relativeDir = fromCurrentFolder(path.dirname(specFile))
+  verbose('relative path to spec file %s is %s', specFile, relativeDir)
+
+  // return path.join(resolveToCwd(relativeDir), '__snapshots__')
+  const folder = joinSnapshotsFolder(relativeDir)
+  verbose('snapshot folder %s', folder)
+
+  return folder
 }
 
 function loadSnaps (snapshotPath) {
@@ -86,9 +107,16 @@ function fileForSpec (specFile, ext, opts = { useRelativePath: false }) {
   la(isLoadOptions(opts), 'expected fileForSpec options', opts)
 
   const specName = path.basename(specFile)
-  verbose('spec file "%s" has name "%s"', specFile, specName)
+  const snapshotFolder = getSnapshotsFolder(specFile, opts)
 
-  let filename = path.join(getSnapshotsFolder(specFile, opts), specName)
+  verbose(
+    'spec file "%s" has name "%s" and snapshot folder %s',
+    specFile,
+    specName,
+    snapshotFolder
+  )
+
+  let filename = path.join(snapshotFolder, specName)
   if (ext) {
     if (!filename.endsWith(ext)) {
       filename += ext
@@ -169,7 +197,7 @@ function saveSnapshots (
   debug('making folder "%s" for snapshot if does not exist', snapshotsFolder)
 
   mkdirp.sync(snapshotsFolder)
-  const filename = fileForSpec(specFile, ext)
+  const filename = fileForSpec(specFile, ext, opts)
   const specRelativeName = fromCurrentFolder(specFile)
   debug('saving snapshots into %s for %s', filename, specRelativeName)
   debug('snapshots are')
@@ -231,5 +259,7 @@ module.exports = {
   raiseIfDifferent,
   fileForSpec,
   exportText,
-  prepareFragments
+  prepareFragments,
+  joinSnapshotsFolder,
+  snapshotsFolderName
 }

@@ -10,6 +10,20 @@ const chdir = require('chdir-promise')
 
 /* eslint-env mocha */
 describe('file system', () => {
+  context('joinSnapshotsFolder', () => {
+    const joinSnapshotsFolder = fileSystem.joinSnapshotsFolder
+    const cwd = process.cwd()
+
+    it('returns relative path', () => {
+      const resolved = joinSnapshotsFolder('foo/bar')
+      la(resolved.startsWith(cwd), resolved)
+      la(
+        resolved.endsWith(fileSystem.snapshotsFolderName + '/foo/bar'),
+        resolved
+      )
+    })
+  })
+
   describe('prepareFragments', () => {
     const prepareFragments = fileSystem.prepareFragments
 
@@ -137,8 +151,10 @@ describe('file system', () => {
     })
 
     it('returns relative path when true in options', () => {
-      const result = fileForSpec('test/file/foo.js', '.js', { useRelativePath: true })
-      la(result.endsWith('test/file/__snapshots__/foo.js'), result)
+      const result = fileForSpec('test/file/foo.js', '.js', {
+        useRelativePath: true
+      })
+      la(result.endsWith('__snapshots__/test/file/foo.js'), result)
     })
   })
 

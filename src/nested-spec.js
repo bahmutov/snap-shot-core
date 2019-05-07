@@ -117,7 +117,7 @@ describe('nested specs', () => {
   })
 })
 
-describe.only('subfolders', () => {
+describe('subfolders', () => {
   // snapshots are saved in subfolders like the spec files
 
   // folder with specs to run
@@ -142,10 +142,10 @@ describe.only('subfolders', () => {
     })
 
     checkSnapshots(tempFolder, {
-      'spec.js.snapshot.js': {
+      'specs/spec.js.snapshot.js': {
         'a 1': 42
       },
-      'spec2.js.snapshot.js': {
+      'specs/subfolder/spec2.js.snapshot.js': {
         'b 1': 42
       }
     })
