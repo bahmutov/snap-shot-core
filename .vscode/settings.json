@@ -1,4 +1,5 @@
 {
   "editor.formatOnSave": true,
-  "standard.enable": true
+  "standard.enable": true,
+  "workbench.colorTheme": "Abyss"
 }

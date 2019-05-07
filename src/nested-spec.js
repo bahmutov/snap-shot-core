@@ -7,24 +7,24 @@ const execa = require('execa')
 
 /* eslint-env mocha */
 /**
-   * Checks a given folder against expected snapshots.
-   * Pass a root folder without `__snapshots__` part,
-   * and an object containing as keys
-   * just names of the expected snapshot files. For value,
-   * use object of exports in that snapshot
-   *
-   * @example
-    ```
-    checkSnapshots(tempFolder, {
-      'spec.js.snapshot.js': {
-        'a 1': 42
-      },
-      'spec2.js.snapshot.js': {
-        'b 1': 42
-      }
-    })
-    ```
-   */
+ * Checks a given folder against expected snapshots.
+ * Pass a root folder without `__snapshots__` part,
+ * and an object containing as keys
+ * just names of the expected snapshot files. For value,
+ * use object of exports in that snapshot
+ *
+ * @example
+```
+checkSnapshots(tempFolder, {
+  'spec.js.snapshot.js': {
+    'a 1': 42
+  },
+  'spec2.js.snapshot.js': {
+    'b 1': 42
+  }
+})
+```
+ */
 const checkSnapshots = (rootFolder, snapshots) => {
   const snapshotsFolder = join(rootFolder, '__snapshots__')
   la(
@@ -59,14 +59,29 @@ const checkSnapshots = (rootFolder, snapshots) => {
   })
 }
 
-// if we are running this test on CI, we cannot save new snapshots
-// so for this particular test we need to clear CI=1 value
-// we remove any of the env variables used by "ci-info" module
+/**
+ * if we are running this test on CI, we cannot save new snapshots
+ * so for this particular test we need to clear CI=1 value
+ * we remove any of the env variables used by "ci-info" module to detect
+ * that it is running on CI
+ * @example
+  ```js
+  execa.shellSync('npm test', {
+    stdio: 'inherit',
+    env: limitedEnv,
+    extendEnv: false
+  })
+  ```
+ */
 const limitedEnv = R.omit(
   ['CI', 'CONTINUOUS_INTEGRATION', 'BUILD_NUMBER', 'RUN_ID', 'TRAVIS'],
   process.env
 )
 
+/**
+ * Copies "package.json" file and "specs" folder from source folder
+ * to newly recreated temp folder.
+ */
 const copyFolder = (sourceFolder, tempFolder) => {
   shell.rm('-rf', tempFolder)
   shell.mkdir(tempFolder)
