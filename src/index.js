@@ -243,7 +243,7 @@ function core (options) {
 
   if (!('sortSnapshots' in opts)) {
     debug('setting sortSnapshots flags to true')
-    opts.sortSnapshots = true
+    opts.sortSnapshots = false
   }
 
   if (!('useRelativePath' in opts)) {

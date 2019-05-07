@@ -29,7 +29,10 @@ const out = snapShot.core({
   store, // optional function to preprocess the value before storing
   compare: compareFn, // optional function that compares values
   raiser: raiseErrorFn, // optional
-  ext: '.test' // default value is '.snapshot.js'
+  ext: '.test', // default value is '.snapshot.js'
+  opts: {
+    // see below
+  }
 })
 ```
 
@@ -129,7 +132,8 @@ from the environment variables.
 - `dryRun` - only show the new snapshot value, but do not save it
 - `update` - override snapshot value with the new one if there is difference
 - `ci` - the tests are running on CI, which should disallow _saving snapshots_
-- `sortSnapshots` - enable sorting snapshots by name when saving (default is true)
+- `sortSnapshots` - enable sorting snapshots by name when saving (default is false)
+- `useRelativePath` - use relative paths inside `__snapshots__` folder to recreate folder structure to mimic spec file relative path. Default is false.
 
 ```js
 // for example to use environment variables
@@ -138,7 +142,8 @@ const opts = {
   dryRun: Boolean(process.env.DRY),
   update: Boolean(process.env.UPDATE),
   ci: Boolean(process.env.CI),
-  sortSnapshots: true
+  sortSnapshots: false,
+  useRelativePath: false
 }
 snapShot.core({
   what,
@@ -152,6 +157,29 @@ snapShot.core({
 
 If `opts.ci` is not set, it will use [is-ci](https://github.com/watson/is-ci)
 to determine if running on CI or not.
+
+## useRelativePath
+
+When you pass `useRelativePath: true` option, the folder structure inside the `__snapshots__` folder will recreate the folder paths to the spec. For example if the specs are in subfolders:
+
+```text
+specs/
+  foo/
+    spec.js
+  bar/
+    spec.js
+```
+
+Then output snapshots will be saved as
+
+```text
+__snapshots__/
+  specs/
+    foo/
+      spec.js.snapshot.js
+    bar/
+      spec.js.snapshot.js
+```
 
 ## Pruning snapshots
 
