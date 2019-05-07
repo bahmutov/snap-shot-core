@@ -254,7 +254,7 @@ function core (options) {
   if (ext) {
     la(ext[0] === '.', 'extension should start with .', ext)
   }
-  debug(`file "${fileParameter} spec "${specName}`)
+  debug(`file "${fileParameter}" spec "${specName}"`)
 
   const setOrCheckValue = any => {
     const index = exactSpecName
