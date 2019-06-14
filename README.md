@@ -36,6 +36,25 @@ const out = snapShot.core({
 })
 ```
 
+The returned value contains both the saved value and the snapshot name
+
+```js
+let out = snapShot.core({
+  what: 42,
+  exactSpecName: 'my snapshot'
+})
+console.log(out)
+// {value: 42, key 'my snapshot'}
+out = snapShot.core({
+  what: 42,
+  specName: 'my snapshot'
+})
+console.log(out)
+// auto-increments counter if we are using
+// just the spec name
+// {value: 42, key 'my snapshot 1'}
+```
+
 ## Save folders
 
 All snapshots are saved in a single folder `__snapshots__`, even if original spec files are nested. See [test-nested-specs](test-nested-specs) example folder.
