@@ -5,6 +5,29 @@ const is = require('check-more-types')
 const { stripIndent } = require('common-tags')
 
 /* eslint-env mocha */
+describe('savedSnapshotName', () => {
+  const { savedSnapshotName } = require('./index')
+
+  it('prefers exact name', () => {
+    la(
+      savedSnapshotName({
+        exactSpecName: 'foo',
+        specName: 'bar',
+        index: 1
+      }) === 'foo'
+    )
+  })
+
+  it('uses spec name and index', () => {
+    la(
+      savedSnapshotName({
+        specName: 'bar',
+        index: 1
+      }) === 'bar 1'
+    )
+  })
+})
+
 describe('throwCannotSaveOnCI', () => {
   const { throwCannotSaveOnCI } = require('./index')
 

@@ -45,6 +45,13 @@ var snapshotsPerTest = {}
  */
 const formKey = (specName, oneIndex) => `${specName} ${oneIndex}`
 
+/**
+ * Returns the name of the snapshot when it is saved.
+ * Could be either an exact string or a combination of the spec name and index
+ */
+const savedSnapshotName = ({ exactSpecName, specName, index }) =>
+  exactSpecName || formKey(specName, index)
+
 function restore (options) {
   if (!options) {
     debug('restoring all counters')
@@ -96,7 +103,7 @@ function findStoredValue (options) {
     return
   }
 
-  const key = exactSpecName || formKey(specName, index)
+  const key = savedSnapshotName({ exactSpecName, specName, index })
   debug('key "%s"', key)
   if (!(key in snapshots)) {
     return
@@ -147,7 +154,7 @@ function storeValue (options) {
     ext,
     R.pick(['useRelativePath'], opts)
   )
-  const key = exactSpecName || formKey(specName, index)
+  const key = savedSnapshotName({ exactSpecName, specName, index })
   snapshots[key] = value
 
   if (opts.show || opts.dryRun) {
@@ -183,7 +190,7 @@ function throwCannotSaveOnCI ({
   specName,
   index
 }) {
-  const key = exactSpecName || formKey(specName, index)
+  const key = savedSnapshotName({ exactSpecName, specName, index })
   throw new Error(
     'Cannot store new snapshot value\n' +
       'in ' +
@@ -344,5 +351,6 @@ module.exports = {
   core,
   restore,
   prune,
-  throwCannotSaveOnCI
+  throwCannotSaveOnCI,
+  savedSnapshotName
 }
