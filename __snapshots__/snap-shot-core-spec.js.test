@@ -21,3 +21,5 @@ A
 exports['single counter can be restored to zero 1'] = `
 A
 `
+
+exports['custom name'] = 42

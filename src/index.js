@@ -213,6 +213,10 @@ function throwCannotSaveOnCI ({
   )
 }
 
+/**
+ * Returns object with "value" property (stored value)
+ * and "key" (formed snapshot name).
+ */
 function core (options) {
   la(is.object(options), 'missing options argument', options)
   options = R.clone(options) // to avoid accidental mutations
@@ -292,6 +296,19 @@ function core (options) {
     }
 
     const value = strip(any)
+    const key = savedSnapshotName({ exactSpecName, specName, index })
+    la(
+      is.unemptyString(key),
+      'expected snapshot key to be a string',
+      key,
+      'exact spec name',
+      exactSpecName,
+      'spec name',
+      specName,
+      'index',
+      index
+    )
+
     const expected = findStoredValue({
       file: fileParameter,
       specName,
@@ -324,7 +341,11 @@ function core (options) {
         comment,
         opts
       })
-      return storedValue
+
+      return {
+        value: storedValue,
+        key
+      }
     }
 
     const usedSpecName = specName || exactSpecName
@@ -335,7 +356,10 @@ function core (options) {
       specName: usedSpecName,
       compare
     })
-    return expected
+    return {
+      value: expected,
+      key
+    }
   }
 
   if (isPromise(what)) {

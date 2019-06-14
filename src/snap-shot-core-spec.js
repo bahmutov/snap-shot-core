@@ -73,8 +73,13 @@ describe('snap-shot-core', () => {
       ext: snapShotExtension,
       opts
     })
-    la(out !== what, 'returns new reference')
-    la(out.foo === what.foo, 'different values', out)
+    la(out.value, 'returned object should have value', out)
+    la(out.key, 'returned object should have key', out)
+
+    la(out.value !== what, 'returns new reference')
+    la(out.value.foo === what.foo, 'different values', out)
+    la(out.key === 'my test 1', 'wrong key', out)
+
     const filename = path.join(
       process.cwd(),
       '__snapshots__/snap-shot-core-spec.js.test'
@@ -97,7 +102,8 @@ describe('snap-shot-core', () => {
       ext: snapShotExtension,
       opts
     })
-    la(out === what * 2, 'expected saved value', out)
+    la(out.value === what * 2, 'expected saved value', out)
+    la(out.key === specName + ' 1', 'wrong key', out)
   })
 
   it('typeof example', function () {
@@ -115,7 +121,21 @@ describe('snap-shot-core', () => {
       ext: snapShotExtension,
       opts
     })
-    la(out === 'function', 'expected type', out)
+    la(out.value === 'function', 'expected type', out)
+    la(out.key === specName + ' 1', 'expected type', out)
+  })
+
+  it('exact snapshot name', function () {
+    const out = snapShotCore.core({
+      what: 42,
+      file,
+      exactSpecName: 'custom name',
+      specName: 'foo',
+      ext: snapShotExtension,
+      opts
+    })
+    la(out.value === 42, 'unexpected value', out)
+    la(out.key === 'custom name', 'unexpected key', out)
   })
 
   it('CI does not allow saving', function () {
