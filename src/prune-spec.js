@@ -13,8 +13,8 @@ describe('pruning snapshots', () => {
     it('prunes an object', () => {
       const runtimeSnapshots = [
         {
-          specName: 'a',
-          file: 'foo.js'
+          key: 'a',
+          specFile: 'foo.js'
         }
       ]
       const snapshots = {
@@ -39,12 +39,12 @@ describe('pruning snapshots', () => {
     it('prunes an object 2', () => {
       const runtimeSnapshots = [
         {
-          specName: 'a',
-          file: 'foo.js'
+          key: 'a',
+          specFile: 'foo.js'
         },
         {
-          specName: 'b',
-          file: 'foo.js'
+          key: 'b',
+          specFile: 'foo.js'
         }
       ]
       const snapshots = {

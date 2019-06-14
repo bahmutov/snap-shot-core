@@ -103,10 +103,17 @@ function loadSnaps (snapshotPath) {
 }
 
 function fileForSpec (specFile, ext, opts = { useRelativePath: false }) {
+  la(is.unemptyString(specFile), 'missing spec file', specFile)
   la(is.maybe.string(ext), 'invalid extension to find', ext)
   la(isLoadOptions(opts), 'expected fileForSpec options', opts)
 
   const specName = path.basename(specFile)
+  la(
+    is.unemptyString(specName),
+    'could not get spec name from spec file',
+    specFile
+  )
+
   const snapshotFolder = getSnapshotsFolder(specFile, opts)
 
   verbose(

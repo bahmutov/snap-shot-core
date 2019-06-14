@@ -5,9 +5,12 @@ const la = require('lazy-ass')
 const is = require('check-more-types')
 const utils = require('./utils')
 
+/**
+ * Checks if the snapshot to keep has all information
+ */
 const isRunTimeSnapshot = is.schema({
-  specName: is.unemptyString,
-  file: is.unemptyString
+  specFile: is.unemptyString,
+  key: is.unemptyString
 })
 
 const pruneSnapshotsInObject = (runtimeSnapshots, snapshots) => {
@@ -16,14 +19,18 @@ const pruneSnapshotsInObject = (runtimeSnapshots, snapshots) => {
     la(isRunTimeSnapshot(r), 'invalid runtime snapshot', r, 'at index', k)
   })
 
-  const specNames = R.map(R.prop('specName'), runtimeSnapshots)
-  debug('have %s before pruning', pluralize('name', specNames.length, true))
+  const keys = R.map(R.prop('key'), runtimeSnapshots)
+  debug(
+    'have runtime snapshots %s before pruning',
+    pluralize('name', keys.length, true)
+  )
   if (debug.enabled) {
-    debug(specNames.sort())
+    debug(keys.sort())
   }
 
+  // TODO simplify search, since now it is just an equality
   const isPresent = (val, key) => {
-    return R.find(specName => key.startsWith(specName))(specNames)
+    return R.find(k => key === k)(keys)
   }
   const prunedSnapshots = R.pickBy(isPresent, snapshots)
   debug(
@@ -45,6 +52,9 @@ const pruneSnapshotsInFile = ({ fs, byFilename, ext }, opts) => file => {
   }
 
   const runtimeSnapshots = byFilename[file]
+  debug('run time snapshots by file')
+  debug(runtimeSnapshots)
+
   const prunedSnapshots = pruneSnapshotsInObject(runtimeSnapshots, snapshots)
   if (R.equals(prunedSnapshots, snapshots)) {
     debug('nothing to prune for file', file)
@@ -59,14 +69,25 @@ const pruneSnapshotsInFile = ({ fs, byFilename, ext }, opts) => file => {
 // Gleb Bahmutov
 // gleb.bahmutov@gmail.com
 // https://github.com/bahmutov/snap-shot-core/issues/88
-const pruneSnapshots = (fs) => ({ tests, ext = utils.DEFAULT_EXTENSION }, opts) => {
+/**
+ * Prunes all unused snapshots for given tests.
+ */
+const pruneSnapshots = fs => (
+  { tests, ext = utils.DEFAULT_EXTENSION },
+  opts
+) => {
   la(is.array(tests), 'missing tests', tests)
-  const byFilename = R.groupBy(R.prop('file'), tests)
   debug('pruning snapshots')
   debug('run time tests')
   debug(tests)
 
-  Object.keys(byFilename).forEach(pruneSnapshotsInFile({ fs, byFilename, ext }, opts))
+  const byFilename = R.groupBy(R.prop('specFile'), tests)
+  debug('rune time tests by file')
+  debug(byFilename)
+
+  Object.keys(byFilename).forEach(
+    pruneSnapshotsInFile({ fs, byFilename, ext }, opts)
+  )
 }
 
 module.exports = fs => {
