@@ -45,12 +45,21 @@ var snapshotsPerTest = {}
  */
 const formKey = (specName, oneIndex) => `${specName} ${oneIndex}`
 
+const haveNameParameters = is.schema({
+  exactSpecName: is.maybe.unemptyString,
+  specName: is.maybe.unemptyString,
+  index: is.maybe.number
+})
+
 /**
  * Returns the name of the snapshot when it is saved.
  * Could be either an exact string or a combination of the spec name and index
  */
-const savedSnapshotName = ({ exactSpecName, specName, index }) =>
-  exactSpecName || formKey(specName, index)
+const savedSnapshotName = (options = {}) => {
+  la(haveNameParameters(options), 'cannot compute snapshot key from', options)
+  const { exactSpecName, specName, index } = options
+  return exactSpecName || formKey(specName, index)
+}
 
 function restore (options) {
   if (!options) {
