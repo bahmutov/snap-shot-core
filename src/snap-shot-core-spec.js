@@ -6,6 +6,7 @@ const fs = require('fs')
 const path = require('path')
 const utils = require('./utils')
 const { stripIndent } = require('common-tags')
+const debug = require('debug')('test')
 
 const opts = {
   show: Boolean(process.env.SHOW),
@@ -210,6 +211,33 @@ describe('snap-shot-core', () => {
           })
         },
         err => err.message.includes('Cannot store undefined value')
+      )
+    )
+  })
+
+  it('adds key property to the thrown error', () => {
+    snapShotCore.core({
+      exactSpecName: 'my snapshot name',
+      what: 42,
+      __filename
+    })
+    debug('saved snapshot')
+
+    la(
+      is.raises(
+        () => {
+          snapShotCore.core({
+            exactSpecName: 'my snapshot name',
+            what: 'some other value',
+            __filename
+          })
+        },
+        err => {
+          debug('caught error')
+          debug(err)
+          debug('err.key = "%s"', err.key)
+          return err.key === 'my snapshot name'
+        }
       )
     )
   })

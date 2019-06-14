@@ -9,5 +9,7 @@ exports['default compare 2'] = {
 }
 
 exports['unicode 1'] = `
-  ✌️
+\u2028 ✌️
 `
+
+exports['my snapshot name'] = 42

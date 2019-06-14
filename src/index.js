@@ -225,6 +225,9 @@ function throwCannotSaveOnCI ({
 /**
  * Returns object with "value" property (stored value)
  * and "key" (formed snapshot name).
+ *
+ * Note: when throwing an error,
+ * "key" property is attached to the thrown error instance.
  */
 function core (options) {
   la(is.object(options), 'missing options argument', options)
@@ -359,12 +362,20 @@ function core (options) {
 
     const usedSpecName = specName || exactSpecName
     debug('found snapshot for "%s", value', usedSpecName, expected)
-    raiser({
-      value,
-      expected,
-      specName: usedSpecName,
-      compare
-    })
+
+    try {
+      raiser({
+        value,
+        expected,
+        specName: usedSpecName,
+        compare
+      })
+    } catch (e) {
+      // so the users know the snapshot used to compare
+      e.key = key
+      throw e
+    }
+
     return {
       value: expected,
       key

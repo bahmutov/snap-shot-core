@@ -217,9 +217,12 @@ const isValidCompareResult = is.schema({
   orElse: is.fn
 })
 
-// expected = schema we expect value to adhere to
-// value - what the test computed right now
-// expected - existing value loaded from snapshot
+/**
+ * Throws error if two values are different.
+ *
+ * value - what the test computed right now
+ * expected - existing value loaded from snapshot
+ */
 function raiseIfDifferent (options) {
   options = options || {}
 

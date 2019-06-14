@@ -55,6 +55,8 @@ console.log(out)
 // {value: 42, key 'my snapshot 1'}
 ```
 
+When throwing an error on different value, the error instance will still have `key` property with the final snapshot name.
+
 ## Save folders
 
 All snapshots are saved in a single folder `__snapshots__`, even if original spec files are nested. See [test-nested-specs](test-nested-specs) example folder.
