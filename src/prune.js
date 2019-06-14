@@ -28,7 +28,10 @@ const pruneSnapshotsInObject = (runtimeSnapshots, snapshots) => {
     debug(keys.sort())
   }
 
-  // TODO simplify search, since now it is just an equality
+  // TODO simplify search, since now it is just an equality id:17
+// - <https://github.com/bahmutov/snap-shot-core/issues/267>
+// Gleb Bahmutov
+// gleb.bahmutov@gmail.com
   const isPresent = (val, key) => {
     return R.find(k => key === k)(keys)
   }
