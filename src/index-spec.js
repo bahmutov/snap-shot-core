@@ -3,8 +3,28 @@
 const la = require('lazy-ass')
 const is = require('check-more-types')
 const { stripIndent } = require('common-tags')
+const fs = require('./file-system')
+const sinon = require('sinon')
 
 /* eslint-env mocha */
+describe('storeValue', () => {
+  const { storeValue } = require('./index')
+
+  it('return snapshot key for exact snapshot name', () => {
+    sinon.stub(fs, 'loadSnapshots').returns({})
+    const key = storeValue({
+      file: 'foo.js',
+      exactSpecName: 'bar',
+      value: 42,
+      opts: {
+        dryRun: true
+      }
+    })
+    fs.loadSnapshots.restore()
+    la(key === 'bar', 'invalid saved snapshot key', key)
+  })
+})
+
 describe('savedSnapshotName', () => {
   const { savedSnapshotName } = require('./index')
 

@@ -112,6 +112,10 @@ function findStoredValue (options) {
   return snapshots[key]
 }
 
+/**
+ * Stores new snapshot value if possible.
+ * Returns the key for the value
+ */
 function storeValue (options) {
   const file = options.file
   const specName = options.specName
@@ -179,6 +183,8 @@ function storeValue (options) {
       JSON.stringify(value, null, 2)
     )
   }
+
+  return key
 }
 
 const isPromise = x => is.object(x) && is.fn(x.then)
@@ -352,5 +358,6 @@ module.exports = {
   restore,
   prune,
   throwCannotSaveOnCI,
-  savedSnapshotName
+  savedSnapshotName,
+  storeValue
 }
