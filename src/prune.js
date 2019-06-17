@@ -21,34 +21,37 @@ const pruneSnapshotsInObject = (runtimeSnapshots, snapshots) => {
 
   const keys = R.map(R.prop('key'), runtimeSnapshots)
   debug(
-    'have runtime snapshots %s before pruning',
-    pluralize('name', keys.length, true)
+    'have runtime %s before pruning',
+    pluralize('snapshot name', keys.length, true)
   )
   if (debug.enabled) {
-    debug(keys.sort())
+    // make sure NOT to mutate the list of snapshot names
+    // otherwise we will save the pruned object with keys
+    // in the sorted order!
+    debug(keys)
+    debug('snapshot file keys in the current order')
+    debug(R.keys(snapshots))
   }
 
-  // TODO simplify search, since now it is just an equality id:17
-  // - <https://github.com/bahmutov/snap-shot-core/issues/267>
-  // Gleb Bahmutov
-  // gleb.bahmutov@gmail.com
   const isPresent = (val, key) => {
-    return R.find(k => key === k)(keys)
+    return R.includes(key, keys)
   }
   const prunedSnapshots = R.pickBy(isPresent, snapshots)
   debug(
-    'after pruning remaining %s',
-    pluralize('name', R.keys(prunedSnapshots).length, true)
+    'after pruning %s remaining',
+    pluralize('snapshot name', R.keys(prunedSnapshots).length, true)
   )
   if (debug.enabled) {
-    debug(R.keys(prunedSnapshots).sort())
+    debug(R.keys(prunedSnapshots))
   }
 
   return prunedSnapshots
 }
 
 const pruneSnapshotsInFile = ({ fs, byFilename, ext }, opts) => file => {
-  const snapshots = fs.loadSnapshots(file, ext, opts)
+  const snapshots = fs.loadSnapshots(file, ext, {
+    useRelativePath: opts.useRelativePath || false
+  })
   if (is.empty(snapshots)) {
     debug('empty snapshots to prune in file', file)
     return
@@ -65,7 +68,10 @@ const pruneSnapshotsInFile = ({ fs, byFilename, ext }, opts) => file => {
   }
 
   debug('saving pruned snapshot file for', file)
-  fs.saveSnapshots(file, prunedSnapshots, ext, opts)
+
+  const saveOptions = R.pick(['sortSnapshots', 'useRelativePath'], opts)
+  debug('save options %o', saveOptions)
+  fs.saveSnapshots(file, prunedSnapshots, ext, saveOptions)
 }
 
 // TODO switch to async id:3
@@ -77,7 +83,10 @@ const pruneSnapshotsInFile = ({ fs, byFilename, ext }, opts) => file => {
  */
 const pruneSnapshots = fs => (
   { tests, ext = utils.DEFAULT_EXTENSION },
-  opts
+  opts = {
+    useRelativePath: false,
+    sortSnapshots: false
+  }
 ) => {
   la(is.array(tests), 'missing tests', tests)
   debug('pruning snapshots')
@@ -85,7 +94,7 @@ const pruneSnapshots = fs => (
   debug(tests)
 
   const byFilename = R.groupBy(R.prop('specFile'), tests)
-  debug('rune time tests by file')
+  debug('run-time tests by file')
   debug(byFilename)
 
   Object.keys(byFilename).forEach(

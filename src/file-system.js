@@ -161,12 +161,16 @@ function loadSnapshots (specFile, ext, opts = { useRelativePath: false }) {
 function prepareFragments (snapshots, opts = { sortSnapshots: true }) {
   la(isSaveOptions(opts), 'expected prepare fragments options', opts)
 
-  const names = opts.sortSnapshots
-    ? Object.keys(snapshots).sort()
-    : Object.keys(snapshots)
+  const keys = Object.keys(snapshots)
+  debug(
+    'prepare %s, sorted? %d',
+    pluralize('snapshot', keys.length, true),
+    opts.sortSnapshots
+  )
+  const names = opts.sortSnapshots ? keys.sort() : keys
 
   const fragments = names.map(testName => {
-    debug(`snapshot name "${testName}"`)
+    debug(`snapshot fragment name "${testName}"`)
     const value = snapshots[testName]
     const escapedName = escapeQuotes(testName)
     return is.string(value)
@@ -209,6 +213,7 @@ function saveSnapshots (
   debug('saving snapshots into %s for %s', filename, specRelativeName)
   debug('snapshots are')
   debug(snapshots)
+  debug('saveSnapshots options %o', opts)
 
   return maybeSortAndSave(snapshots, filename, opts)
 }
