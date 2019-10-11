@@ -159,6 +159,12 @@ describe('exportText', () => {
     la(is.fn(exportText))
   })
 
+  it('works properly with empty strings', () => {
+    const formatted = exportText('name', '')
+    const expected = "exports['name'] = `\n\n`\n"
+    la(formatted === expected, 'expected\n' + expected + '\ngot\n' + formatted)
+  })
+
   it('does escape backtick on the text', () => {
     const formatted = exportText('name', '`code`')
     const expected = "exports['name'] = `\n\\`code\\`\n`\n"

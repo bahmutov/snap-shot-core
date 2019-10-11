@@ -78,27 +78,6 @@ describe('file system', () => {
       la(is.fn(saveSnapshots))
     })
 
-    it('throws detailed error when trying to store empty string value', () => {
-      la(
-        is.raises(
-          () => {
-            // snapshots with empty string to save
-            const snapshots = {
-              test: ''
-            }
-            saveSnapshots('./foo-spec.js', snapshots, '.js', {
-              sortSnapshots: true,
-              useRelativePath: false
-            })
-          },
-          err => {
-            const text = 'Cannot store empty / null / undefined string'
-            return err.message.includes(text)
-          }
-        )
-      )
-    })
-
     it('puts new lines around text snapshots', () => {
       sinon.stub(fs, 'writeFileSync')
       sinon.stub(mkdirp, 'sync')
@@ -113,9 +92,9 @@ describe('file system', () => {
       la(
         text === expected,
         'should add newlines around text snapshot\n' +
-          text +
-          '\nexpected\n' +
-          expected
+        text +
+        '\nexpected\n' +
+        expected
       )
     })
   })
