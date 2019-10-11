@@ -4,7 +4,6 @@ const la = require('lazy-ass')
 const is = require('check-more-types')
 const Result = require('folktale/result')
 const jsesc = require('jsesc')
-const stripIndent = require('common-tags').stripIndent
 
 // TODO: we should also consider the file spec name + test name id:5
 // Gleb Bahmutov
@@ -64,16 +63,7 @@ const compareTypes = options => {
  */
 function exportText (name, value) {
   la(is.unemptyString(name), 'expected snapshot name, got:', name)
-  if (!is.unemptyString(value)) {
-    const message = stripIndent`
-      Cannot store empty / null / undefined string as a snapshot value.
-      Seems the value you are trying to store in a snapshot "${name}"
-      is empty. Snapshots only work well if they have actual content
-      to store. Otherwise, why bother?
-    `
-    throw new Error(message)
-  }
-  la(is.unemptyString(value), 'expected string value', value)
+  la(is.string(value), 'expected string value', value)
 
   // jsesc replace "\n" with "\\n"
   // https://github.com/mathiasbynens/jsesc/issues/20
