@@ -90,7 +90,7 @@
     }
   },
   "devDependencies": {
-    "@octokit/request-error": "1.0.4",
+    "@octokit/request-error": "1.2.1",
     "ban-sensitive-files": "1.9.2",
     "chdir-promise": "0.6.2",
     "dependency-check": "3.3.0",
