@@ -119,7 +119,7 @@
     "escape-quotes": "1.0.2",
     "folktale": "2.3.2",
     "is-ci": "2.0.0",
-    "jsesc": "2.5.2",
+    "jsesc": "3.0.2",
     "lazy-ass": "1.6.0",
     "mkdirp": "1.0.4",
     "pluralize": "8.0.0",
