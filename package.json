@@ -91,7 +91,7 @@
   },
   "devDependencies": {
     "@octokit/request-error": "1.2.1",
-    "ban-sensitive-files": "1.9.15",
+    "ban-sensitive-files": "1.10.11",
     "chdir-promise": "0.6.2",
     "dependency-check": "3.4.1",
     "deps-ok": "1.4.1",
